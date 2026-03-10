@@ -3,7 +3,7 @@ using System;
 namespace ConsoleApp2.srp.Case3
 {
     /// <summary>
-    /// Отвечает за сохранение заказов.
+    /// РћС‚РІРµС‡Р°РµС‚ Р·Р° СЃРѕС…СЂР°РЅРµРЅРёРµ Р·Р°РєР°Р·РѕРІ.
     /// </summary>
     class OrderRepository
     {
