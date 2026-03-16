@@ -1,83 +1,82 @@
-﻿namespace ConsoleApp2.lsp
-{
-    internal class Case2
+﻿    namespace ConsoleApp2.lsp
     {
-        public class BankAccount
+        internal class Case2
         {
-            public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
-            public double Balance { get; protected set; }
-
-            public virtual void Deposit(double amount)
+            public class BankAccount
             {
-                if (amount <= 0)
-                    throw new ArgumentException("Amount must be positive");
+                public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
+                public double Balance { get; protected set; }
 
-                Balance += amount;
-                Console.WriteLine($"Deposited {amount} into account {AccountNumber}");
+                public virtual void Deposit(double amount)
+                {
+                    Balance += amount;
+                    Console.WriteLine($"Deposited {amount} into account {AccountNumber}");
+                }
+
+                public virtual void Withdraw(double amount)
+                {
+                    Balance -= amount;
+                    Console.WriteLine($"Withdrew {amount} from account {AccountNumber}");
+                }
+
+                public virtual void Transfer(BankAccount targetAccount, double amount)
+                {
+                    Withdraw(amount);
+                    targetAccount.Deposit(amount);
+
+                    Console.WriteLine($"Transferred {amount} from account {AccountNumber} to {targetAccount.AccountNumber}");
+                }
+
+                public virtual string GetAccountInfo()
+                {
+                    return $"Account: {AccountNumber} with balance: {Balance}";
+                }
+
+                public virtual void UpdateAccountDetails()
+                {
+                    Console.WriteLine($"Updating account details for {AccountNumber}");
+                }
             }
 
-            public virtual void Withdraw(double amount)
+            public class FrozenAccount : BankAccount
             {
-                if (amount <= 0)
-                    throw new ArgumentException("Amount must be positive");
+                public bool IsFrozen { get; private set; } = true;
 
-                if (Balance < amount)
-                    throw new InvalidOperationException("Insufficient funds");
+                public override void Withdraw(double amount)
+                {
+                    if (IsFrozen)
+                        throw new InvalidOperationException("Account is frozen");
 
-                Balance -= amount;
-                Console.WriteLine($"Withdrew {amount} from account {AccountNumber}");
-            }
+                    base.Withdraw(amount);
+                }
 
-            public virtual void Transfer(BankAccount targetAccount, double amount)
-            {
-                Withdraw(amount);
-                targetAccount.Deposit(amount);
+                public override void Deposit(double amount)
+                {
+                    if (IsFrozen)
+                        throw new InvalidOperationException("Account is frozen");
 
-                Console.WriteLine($"Transferred {amount} from account {AccountNumber} to {targetAccount.AccountNumber}");
-            }
+                    base.Deposit(amount);
+                }
 
-            public virtual string GetAccountInfo()
-            {
-                return $"Account: {AccountNumber} with balance: {Balance}";
-            }
+                public void Freeze()
+                {
+                    IsFrozen = true;
+                    Console.WriteLine($"Account {AccountNumber} is frozen");
+                }
 
-            public virtual void UpdateAccountDetails()
-            {
-                Console.WriteLine($"Updating account details for {AccountNumber}");
-            }
-        }
+                public void Unfreeze()
+                {
+                    IsFrozen = false;
+                    Console.WriteLine($"Account {AccountNumber} is unfrozen");
+                }
+                public override void Transfer(BankAccount targetAccount, double amount)
+                {
+                    if (IsFrozen)
+                        throw new InvalidOperationException("Account is frozen");
 
-        public class FrozenAccount : BankAccount
-        {
-            public bool IsFrozen { get; private set; } = true;
+                    base.Transfer(targetAccount, amount);
+                }
 
-            public override void Withdraw(double amount)
-            {
-                if (IsFrozen)
-                    throw new InvalidOperationException("Account is frozen");
-
-                base.Withdraw(amount);
-            }
-
-            public override void Deposit(double amount)
-            {
-                if (IsFrozen)
-                    throw new InvalidOperationException("Account is frozen");
-
-                base.Deposit(amount);
-            }
-
-            public void Freeze()
-            {
-                IsFrozen = true;
-                Console.WriteLine($"Account {AccountNumber} is frozen");
-            }
-
-            public void Unfreeze()
-            {
-                IsFrozen = false;
-                Console.WriteLine($"Account {AccountNumber} is unfrozen");
             }
         }
     }
-}
