@@ -1,82 +1,78 @@
-﻿    namespace ConsoleApp2.lsp
+﻿namespace ConsoleApp2.lsp
+{
+    internal class Case2
     {
-        internal class Case2
+        public class BankAccount
         {
-            public class BankAccount
+            public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
+            public double Balance { get; protected set; }
+
+            public bool IsFrozen { get; protected set; }
+
+            protected void EnsureNotFrozen()
             {
-                public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
-                public double Balance { get; protected set; }
-
-                public virtual void Deposit(double amount)
-                {
-                    Balance += amount;
-                    Console.WriteLine($"Deposited {amount} into account {AccountNumber}");
-                }
-
-                public virtual void Withdraw(double amount)
-                {
-                    Balance -= amount;
-                    Console.WriteLine($"Withdrew {amount} from account {AccountNumber}");
-                }
-
-                public virtual void Transfer(BankAccount targetAccount, double amount)
-                {
-                    Withdraw(amount);
-                    targetAccount.Deposit(amount);
-
-                    Console.WriteLine($"Transferred {amount} from account {AccountNumber} to {targetAccount.AccountNumber}");
-                }
-
-                public virtual string GetAccountInfo()
-                {
-                    return $"Account: {AccountNumber} with balance: {Balance}";
-                }
-
-                public virtual void UpdateAccountDetails()
-                {
-                    Console.WriteLine($"Updating account details for {AccountNumber}");
-                }
+                if (IsFrozen)
+                    throw new InvalidOperationException("Account is frozen");
             }
 
-            public class FrozenAccount : BankAccount
+            public virtual void Deposit(double amount)
             {
-                public bool IsFrozen { get; private set; } = true;
+                EnsureNotFrozen();
+                Balance += amount;
+                Console.WriteLine("Deposited " + amount + " into account " + AccountNumber);
+            }
 
-                public override void Withdraw(double amount)
-                {
-                    if (IsFrozen)
-                        throw new InvalidOperationException("Account is frozen");
+            public virtual void Withdraw(double amount)
+            {
+                EnsureNotFrozen();
+                Balance -= amount;
+                Console.WriteLine("Withdrew " + amount + " from account " + AccountNumber);
+            }
 
-                    base.Withdraw(amount);
-                }
+            public virtual void Transfer(BankAccount targetAccount, double amount)
+            {
+                if (targetAccount == null)
+                    throw new ArgumentNullException(nameof(targetAccount));
 
-                public override void Deposit(double amount)
-                {
-                    if (IsFrozen)
-                        throw new InvalidOperationException("Account is frozen");
+                EnsureNotFrozen();
+                targetAccount.EnsureNotFrozen();
 
-                    base.Deposit(amount);
-                }
+                Withdraw(amount);
+                targetAccount.Deposit(amount);
 
-                public void Freeze()
-                {
-                    IsFrozen = true;
-                    Console.WriteLine($"Account {AccountNumber} is frozen");
-                }
+                Console.WriteLine("Transferred " + amount + " from account " + AccountNumber + " to " + targetAccount.AccountNumber);
+            }
 
-                public void Unfreeze()
-                {
-                    IsFrozen = false;
-                    Console.WriteLine($"Account {AccountNumber} is unfrozen");
-                }
-                public override void Transfer(BankAccount targetAccount, double amount)
-                {
-                    if (IsFrozen)
-                        throw new InvalidOperationException("Account is frozen");
+            public virtual string GetAccountInfo()
+            {
+                return "Account: " + AccountNumber + " with balance: " + Balance +
+                       (IsFrozen ? " (Frozen)" : " (Active)");
+            }
 
-                    base.Transfer(targetAccount, amount);
-                }
+            public virtual void UpdateAccountDetails()
+            {
+                Console.WriteLine("Updating account details for " + AccountNumber);
+            }
 
+            public void Freeze()
+            {
+                IsFrozen = true;
+                Console.WriteLine("Account " + AccountNumber + " is frozen");
+            }
+
+            public void Unfreeze()
+            {
+                IsFrozen = false;
+                Console.WriteLine("Account " + AccountNumber + " is unfrozen");
+            }
+        }
+
+        public class FrozenAccount : BankAccount
+        {
+            public FrozenAccount()
+            {
+                IsFrozen = true;
             }
         }
     }
+}
