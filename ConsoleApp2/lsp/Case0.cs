@@ -8,58 +8,32 @@ namespace ConsoleApp2.lsp
 {
     internal class Case0
     {
-        public class Shape
+        public abstract class Shape
         {
-            protected int Width { get; set; }
-            protected int Height { get; set; }
 
-            public virtual void SetWidth(int width)
-            {
-                Width = width;
-                Console.WriteLine($"Width set to {width}.");
-            }
+            public abstract double CalculateArea();
 
-            public virtual void SetHeight(int height)
-            {
-                Height = height;
-                Console.WriteLine($"Height set to {height}.");
-            }
+            public abstract void Draw();
 
-            public virtual int CalculateArea()
-            {
-                return Width * Height;
-            }
-
-            public virtual void Draw()
-            {
-                Console.WriteLine("Drawing shape.");
-            }
         }
 
         public class Circle : Shape
         {
-            public override void SetWidth(int width)
+            public int Radius { get; set; }
+
+            public Circle(int radius)
             {
-                Width = width;
-                Height = width;
-                Console.WriteLine($"Circle diameter set to {width}.");
+                Radius = radius;
             }
 
-            public override void SetHeight(int height)
+            public override double CalculateArea()
             {
-                Width = height;
-                Height = height;
-                Console.WriteLine($"Circle diameter set to {height}.");
-            }
-
-            public override int CalculateArea()
-            {
-                return (int)(Math.PI * (Width / 2) * (Width / 2));
+                return Math.PI * Radius * Radius;
             }
 
             public override void Draw()
             {
-                Console.WriteLine("Drawing circle.");
+                Console.WriteLine($"Drawing circle with radius {Radius}.");
             }
         }
 
