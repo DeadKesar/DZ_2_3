@@ -4,11 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// жесткая зависимость Notifier от EmailSender. Заменил на ISender
+
 namespace ConsoleApp2.dip
 {
     internal class Case1
     {
-        public class EmailSender
+        public interface ISender {
+            void Send(string recipient, string subject, string message);
+            void Log(string log);
+        }
+
+        public class EmailSender : ISender
         {
             public string SmtpServer { get; set; } 
             public int Port { get; set; }
@@ -24,7 +31,7 @@ namespace ConsoleApp2.dip
                 Console.WriteLine("Connecting to SMTP server " + SmtpServer + ":" + Port);
             }
 
-            public void SendEmail(string recipient, string subject, string message)
+            public void Send(string recipient, string subject, string message)
             {
                 Console.WriteLine("Sending email to " + recipient + " with subject " + subject);
             }
@@ -34,7 +41,7 @@ namespace ConsoleApp2.dip
                 Console.WriteLine("Disconnecting from SMTP server " + SmtpServer);
             }
 
-            public void LogEmail(string log)
+            public void Log(string log)
             {
                 Console.WriteLine("Logging email: " + log);
             }
@@ -42,25 +49,23 @@ namespace ConsoleApp2.dip
 
         public class Notifier
         {
-            private EmailSender _emailSender;
+            private ISender _sender;
             public string NotifierName { get; set; }
 
-            public Notifier(string name)
+            public Notifier(string name, ISender sender)
             {
                 NotifierName = name;
-                _emailSender = new EmailSender("smtp.example.com", 25);
+                _sender = sender;
             }
 
-            public void NotifyByEmail(string recipient, string subject, string message)
+            public void Notify(string recipient, string subject, string message)
             {
-                _emailSender.Connect();
-                _emailSender.SendEmail(recipient, subject, message);
-                _emailSender.Disconnect();
+                _sender.Send(recipient, subject, message);
             }
 
             public void LogNotification(string log)
             {
-                _emailSender.LogEmail(log);
+                _sender.Log(log);
             }
 
             public void UpdateNotifierName(string newName)
