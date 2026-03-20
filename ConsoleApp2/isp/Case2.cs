@@ -8,15 +8,37 @@ namespace ConsoleApp2.isp
 {
     internal class Case2
     {
-        public interface IMultiFunctionDevice
+        public interface ICallable
         {
             void Call(string number);
+        }
+
+        public interface IBrowsable
+        {
             void Browse(string url);
+        }
+
+        public interface ICamera
+        {
             void TakePhoto();
+        }
+
+        public interface IEmailSender
+        {
             void SendEmail(string recipient, string subject, string body);
         }
 
-        public class SmartPhone : IMultiFunctionDevice
+        public interface ISmsSender
+        {
+            void SendSMS(string recipient, string message);
+        }
+
+        public interface IMusicPlayer
+        {
+            void PlayMusic();
+        }
+
+        public class SmartPhone : ICallable, IBrowsable, ICamera, IEmailSender, IMusicPlayer
         {
             public string Model { get; set; }
             public string OS { get; set; }
@@ -29,31 +51,27 @@ namespace ConsoleApp2.isp
 
             public void Call(string number)
             {
-                Console.WriteLine("SmartPhone " + Model + " calling " + number);
+                Console.WriteLine($"SmartPhone {Model} calling {number}");
             }
-
             public void Browse(string url)
             {
-                Console.WriteLine("SmartPhone " + Model + " browsing " + url);
+                Console.WriteLine($"SmartPhone {Model} browsing {url}");
             }
-
             public void TakePhoto()
             {
-                Console.WriteLine("SmartPhone " + Model + " takes a high quality photo");
-            }
-
+                Console.WriteLine($"SmartPhone {Model} takes a high quality photo");
+            } 
             public void SendEmail(string recipient, string subject, string body)
             {
-                Console.WriteLine("SmartPhone " + Model + " sending email to " + recipient);
+                Console.WriteLine($"SmartPhone {Model} sending email to {recipient}");
             }
-
             public void PlayMusic()
             {
-                Console.WriteLine("SmartPhone " + Model + " is playing music");
+                Console.WriteLine($"SmartPhone {Model} is playing music");
             }
         }
 
-        public class BasicPhone : IMultiFunctionDevice
+        public class BasicPhone : ICallable, ICamera, ISmsSender
         {
             public string Model { get; set; }
 
@@ -64,27 +82,17 @@ namespace ConsoleApp2.isp
 
             public void Call(string number)
             {
-                Console.WriteLine("BasicPhone " + Model + " calling " + number);
-            }
-
-            public void Browse(string url)
-            {
-                throw new NotSupportedException("BasicPhone " + Model + " does not support browsing.");
+                Console.WriteLine($"BasicPhone {Model} calling {number}");
             }
 
             public void TakePhoto()
             {
-                Console.WriteLine("BasicPhone " + Model + " takes a very low quality photo");
-            }
-
-            public void SendEmail(string recipient, string subject, string body)
-            {
-                throw new NotSupportedException("BasicPhone " + Model + " does not support sending emails.");
+                Console.WriteLine($"BasicPhone {Model} takes a very low quality photo");
             }
 
             public void SendSMS(string recipient, string message)
             {
-                Console.WriteLine("BasicPhone " + Model + " sending SMS to " + recipient);
+                Console.WriteLine($"BasicPhone {Model} sending SMS to {recipient}");
             }
         }
 
