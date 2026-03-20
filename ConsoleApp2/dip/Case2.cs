@@ -4,11 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// жесткая зависимость UserActivity от Logger. Добавил интерфейс ILogger
+
 namespace ConsoleApp2.dip
 {
     internal class Case2
     {
-        public class Logger
+        public interface ILogger {
+            void WriteLog(string log);
+            void ClearLog();
+            void ArchiveLog();
+            void GetLogStatus();
+        }
+
+        public class Logger : ILogger
         {
             public string FilePath { get; set; }
 
@@ -40,15 +49,15 @@ namespace ConsoleApp2.dip
 
         public class UserActivity
         {
-            private Logger _logger;
+            private ILogger _logger;
             public string UserName { get; set; }
             public int ActivityCount { get; set; }
 
-            public UserActivity(string userName)
+            public UserActivity(string userName, ILogger logger)
             {
                 UserName = userName;
                 ActivityCount = 0;
-                _logger = new Logger("user_activity.log");
+                _logger = logger;
             }
 
             public void RecordActivity(string activity)
