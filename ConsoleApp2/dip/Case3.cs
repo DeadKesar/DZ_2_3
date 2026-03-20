@@ -4,11 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// жесткая зависимость ReportGenerator от MySQLDatabase. 
+// Добавил интерфейс IDatabase + исправил инициализацию reportData
+
 namespace ConsoleApp2.dip
 {
     internal class Case3
     {
-        public class MySQLDatabase
+        public interface IDatabase {
+            void Connect();
+            void Disconnect();
+            List<string> GetRecords();
+            void WriteLogEntry(string entry);
+        }
+
+        public class MySQLDatabase : IDatabase
         {
             private string connectionString;
             public MySQLDatabase(string connectionString)
@@ -24,7 +34,8 @@ namespace ConsoleApp2.dip
 
             public void Disconnect()
             {
-                // NOIMPL
+                Thread.Sleep(3000);
+                Console.WriteLine($"Disconnection done {connectionString}");
             }
 
             public List<string> GetRecords()
@@ -40,12 +51,13 @@ namespace ConsoleApp2.dip
 
         public class ReportGenerator
         {
-            private MySQLDatabase database;
-            private List<string> reportData = [];
+            private IDatabase database;
+            private List<string> reportData;
 
-            public ReportGenerator()
+            public ReportGenerator(IDatabase mySQLDatabase)
             {
-                database = new MySQLDatabase("mysql://dsadlkasjdklasjdaklsjd");
+                reportData = new List<string>();
+                database = mySQLDatabase;
             }
 
             public void GenerateReport()
