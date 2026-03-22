@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp2.srp
 {
@@ -10,29 +7,38 @@ namespace ConsoleApp2.srp
     {
         class Order
         {
-            public int OrderId;
-            public List<string> Items = new List<string>();
+            public int OrderId { get; set; }
+            public List<string> Items { get; } = new List<string>();
 
             public void AddItem(string item)
             {
                 Items.Add(item);
             }
+        }
 
-            public void SaveToDatabase()
+        class OrderPrinter
+        {
+            public void PrintOrder(Order order)
             {
-                Console.WriteLine("Order saved to database!");
-            }
-
-            public void PrintOrder()
-            {
-                Console.WriteLine("Order #" + OrderId);
-                foreach (var item in Items)
+                Console.WriteLine("Order #" + order.OrderId);
+                foreach (var item in order.Items)
                 {
                     Console.WriteLine(" - " + item);
                 }
             }
+        }
 
-            public void SendOrderConfirmation()
+        class OrderRepository
+        {
+            public void SaveToDatabase(Order order)
+            {
+                Console.WriteLine("Order saved to database!");
+            }
+        }
+
+        class OrderNotificationService
+        {
+            public void SendOrderConfirmation(Order order)
             {
                 Console.WriteLine("Order confirmation email sent!");
             }
@@ -40,13 +46,17 @@ namespace ConsoleApp2.srp
 
         public class App
         {
-            static void Main()
+            public void Execute()
             {
-                Order order = new Order();
+                Order order = new Order { OrderId = 1 };
+                OrderPrinter printer = new OrderPrinter();
+                OrderRepository repository = new OrderRepository();
+                OrderNotificationService notificationService = new OrderNotificationService();
+
                 order.AddItem("Laptop");
-                order.PrintOrder();
-                order.SaveToDatabase();
-                order.SendOrderConfirmation();
+                printer.PrintOrder(order);
+                repository.SaveToDatabase(order);
+                notificationService.SendOrderConfirmation(order);
             }
         }
     }
