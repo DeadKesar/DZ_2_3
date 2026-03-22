@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace ConsoleApp2.srp
 {
@@ -10,41 +7,57 @@ namespace ConsoleApp2.srp
     {
         class Employee
         {
-            public string Name;
-            public double Salary;
+            public string Name { get; set; } = "";
+            public double Salary { get; set; }
+        }
 
-            public void SetSalary(double amount)
+        class EmployeeService
+        {
+            public void SetSalary(Employee employee, double amount)
             {
-                Salary = amount;
+                employee.Salary = amount;
             }
+        }
 
-            public void PrintInfo()
+        class EmployeePrinter
+        {
+            public void PrintInfo(Employee employee)
             {
-                Console.WriteLine("Employee: " + Name + " Salary: $" + Salary);
+                Console.WriteLine("Employee: " + employee.Name + " Salary: $" + employee.Salary);
             }
+        }
 
-            public void SaveToFile()
+        class EmployeeFileManager
+        {
+            private const string FilePath = "employee.txt";
+
+            public void SaveToFile(Employee employee)
             {
-                File.WriteAllText("employee.txt", Name + " - " + Salary);
+                File.WriteAllText(FilePath, employee.Name + " - " + employee.Salary);
                 Console.WriteLine("Employee saved to file!");
             }
 
             public void LoadFromFile()
             {
-                string data = File.ReadAllText("employee.txt");
+                string data = File.ReadAllText(FilePath);
                 Console.WriteLine("Loaded: " + data);
             }
         }
 
-        class Program
+        public class App
         {
-            static void Main()
+            public void Execute()
             {
                 Employee emp = new Employee();
+                EmployeeService service = new EmployeeService();
+                EmployeePrinter printer = new EmployeePrinter();
+                EmployeeFileManager fileManager = new EmployeeFileManager();
+
                 emp.Name = "John";
-                emp.SetSalary(5000);
-                emp.PrintInfo();
-                emp.SaveToFile();
+                service.SetSalary(emp, 5000);
+
+                printer.PrintInfo(emp);
+                fileManager.SaveToFile(emp);
             }
         }
     }
