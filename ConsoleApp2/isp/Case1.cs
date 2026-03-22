@@ -24,7 +24,7 @@ namespace ConsoleApp2.isp
         }
         public class BasicPrinter : IPrinter
         {
-            public string Model { get; set; }
+            public string Model { get; }
 
             public BasicPrinter(string model)
             {
@@ -44,7 +44,7 @@ namespace ConsoleApp2.isp
 
         public class AllInOnePrinter : IPrinter, IScanner, IFax, ICopy
         {
-            public string Model { get; set; }
+            public string Model { get; }
 
             public AllInOnePrinter(string model)
             {
