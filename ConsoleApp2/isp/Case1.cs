@@ -36,21 +36,6 @@ namespace ConsoleApp2.isp
                 Console.WriteLine("BasicPrinter printing: " + document);
             }
 
-            public void Scan(string document)
-            {
-                throw new NotImplementedException("BasicPrinter cannot scan documents");
-            }
-
-            public void Fax(string document)
-            {
-                throw new NotImplementedException("BasicPrinter cannot fax documents");
-            }
-
-            public void Copy(string document)
-            {
-                throw new NotImplementedException("BasicPrinter cannot copy documents");
-            }
-
             public void Maintenance()
             {
                 Console.WriteLine("Performing maintenance on BasicPrinter " + Model);
