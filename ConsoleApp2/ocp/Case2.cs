@@ -8,7 +8,11 @@ namespace ConsoleApp2.ocp
 {
     class Case2
     {
-        class Circle
+        class interface IShape // добавляем общий интерфейс для уже имеющихся и будущих фигур, можно писать сколько угодно фигур, функция калькулятора не меняется
+        {
+            double GetArea();
+        }
+        class Circle : IShape // делаем объекты фигуры с функцией GetArea, привязанной к интерфейсу
         {
             public double Radius;
             public Circle(double radius)
@@ -20,7 +24,7 @@ namespace ConsoleApp2.ocp
                 return Math.PI * Radius * Radius;
             }
         }
-        class Rectangle
+        class Rectangle : IShape
         {
             public double Width;
             public double Height;
@@ -36,17 +40,9 @@ namespace ConsoleApp2.ocp
         }
         class AreaCalculator
         {
-            public double Calculate(object shape)
+            public double Calculate(IShape shape)
             {
-                if (shape is Circle)
-                {
-                    return ((Circle)shape).GetArea();
-                }
-                else if (shape is Rectangle)
-                {
-                    return ((Rectangle)shape).GetArea();
-                }
-                return 0;
+                return shape.GetArea();
             }
         }
         class Program
@@ -60,7 +56,7 @@ namespace ConsoleApp2.ocp
                 Console.WriteLine("Rectangle area: " + calculator.Calculate(r));
             }
         }
-
+        // да, я вижу, что закоментированный код внизу - по смыслу то же самое, что написал я, но мне больше нравится интерфейс 
 
         //class Figure
         //{
