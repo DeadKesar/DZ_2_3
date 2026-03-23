@@ -8,7 +8,14 @@ namespace ConsoleApp2.dip
 {
     internal class Case2
     {
-        public class Logger
+        public interface ILogger // создаём интерфейс, который задействуется в UserActivity
+        {
+            void WriteLog(string log);
+            void ClearLog();
+            void ArchiveLog();
+            void GetLogStatus();
+        }
+        public class Logger : ILogger // на основе интерфейса прописываем Logger (в нашем случае интерфейс на основе Logger, ведь логгер уже дан)
         {
             public string FilePath { get; set; }
 
@@ -40,15 +47,15 @@ namespace ConsoleApp2.dip
 
         public class UserActivity
         {
-            private Logger _logger;
+            private ILogger _logger;
             public string UserName { get; set; }
             public int ActivityCount { get; set; }
 
-            public UserActivity(string userName)
+            public UserActivity(string userName, ILogger logger)
             {
                 UserName = userName;
                 ActivityCount = 0;
-                _logger = new Logger("user_activity.log");
+                _logger = logger; // передаём в конструктор объект с использованием интерфейса ILogger, в нашем случае Logger
             }
 
             public void RecordActivity(string activity)
@@ -75,4 +82,10 @@ namespace ConsoleApp2.dip
         }
 
     }
+}
+void main(void) // написал main чтобы показать, что объект, в классе которого используется интерфейс, должен быть задан (создан) за пределами описания класса
+{
+    string userName = "Привет, меня зовут Влад и я зубная фея";
+    ILogger logger = new Logger("user_activity.log"); // создаём объект с использованием интерфейса вне метода, в котором он будет использоваться
+    var user = new UserActivity(userName,logger); // тип var - тип переменной задаётся компилятором (как auto в C++), необходимо явно указывать тип при определении переменной (в нашем случае через new)
 }
