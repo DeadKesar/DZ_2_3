@@ -8,51 +8,66 @@ namespace ConsoleApp2.lsp
 {
     internal class Case2
     {
-        public class BankAccount
+        public abstract class Account // создаём абстрактный класс, в котором прописываем общие функции для обычного и замороженного аккаунтов
+        {
+            public string AccountNumber { get; set; }
+            public abstract void Deposit(double amount);
+            public abstract void Withdraw(double amount);
+            public abstract string GetAccountInfo();
+        }
+        public class BankAccount : Account // наследование абстрактного класса 
         {
             public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
             public double Balance { get; set; }
 
-            public virtual void Deposit(double amount)
+            public override void Deposit(double amount)
             {
                 Balance += amount;
                 Console.WriteLine("Deposited " + amount + " into account " + AccountNumber);
             }
 
-            public virtual void Withdraw(double amount)
+            public override void Withdraw(double amount)
             {
                 Balance -= amount;
                 Console.WriteLine("Withdrew " + amount + " from account " + AccountNumber);
             }
 
-            public virtual void Transfer(BankAccount targetAccount, double amount)
+            public void Transfer(BankAccount targetAccount, double amount)
             {
                 Withdraw(amount);
                 targetAccount.Deposit(amount);
                 Console.WriteLine("Transferred " + amount + " from account " + AccountNumber + " to " + targetAccount.AccountNumber);
             }
 
-            public virtual string GetAccountInfo()
+            public override string GetAccountInfo()
             {
                 return "Account: " + AccountNumber + " with balance: " + Balance;
             }
 
-            public virtual void UpdateAccountDetails()
+            public void UpdateAccountDetails()
             {
                 Console.WriteLine("Updating account details for " + AccountNumber);
             }
         }
 
-        public class FrozenAccount : BankAccount
+        public class FrozenAccount : Account // тоже наследование абстрактного класса
         {
+            public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
             public bool IsFrozen { get; set; } = true;
 
             public override void Withdraw(double amount)
-            { }
+            {
+                Console.WriteLine($"Cannot withdraw from frozen account "  + AccountNumber);
+            }
 
             public override void Deposit(double amount)
             {
                 Console.WriteLine("Cannot deposit to a frozen account " + AccountNumber);
+            }
+            
+            public override string GetAccountInfo()
+            {
+                return $"Frozen account: " + AccountNumber;
             }
 
             public void Unfreeze()
