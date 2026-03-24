@@ -8,15 +8,17 @@ namespace ConsoleApp2.isp
 {
     internal class Case3
     {
-        public interface IFileRoleOperations
+        public interface IReadableFile // добавлен интерфейс, содержащий функции для чтения файла
         {
             void OpenFile();
             string ReadFile();
+        }
+        public interface IFileRoleOperations : IReadableFile // наследование интерфейса чтения, чтобы не прописывать чтение файла
+        {
             void WriteFile(string content);
             void ShareFile(string recipient);
             void ArchiveFile();
         }
-
         public class StandardFile : IFileRoleOperations
         {
             public string FileName { get; set; }
@@ -53,13 +55,13 @@ namespace ConsoleApp2.isp
                 Console.WriteLine("Archiving file " + FileName);
             }
 
-            public void GetFileDetails()
+            public void GetFileDetails() // специфичные для класса функции не прописаны в интерфейсе, чтобы не нарушать принцип разделения
             {
                 Console.WriteLine("File details: " + FileName + ", located at " + FilePath);
             }
         }
 
-        public class ReadOnlyFile : IFileRoleOperations
+        public class ReadOnlyFile : IReadableFile
         {
             public string FileName { get; set; }
             public string FilePath { get; set; }
@@ -79,27 +81,12 @@ namespace ConsoleApp2.isp
             {
                 return "Read-only content from " + FileName;
             }
-
-            public void WriteFile(string content)
-            {
-                throw new NotSupportedException("Cannot write to a read-only file " + FileName);
-            }
-
-            public void ShareFile(string recipient)
-            {
-                throw new NotSupportedException("Sharing is not supported for read-only file " + FileName);
-            }
-
-            public void ArchiveFile()
-            {
-                throw new NotSupportedException("Archiving is not supported for read-only file " + FileName);
-            }
-
-            public void GetFileInfo()
+            
+            public void GetFileInfo() // такая же специфичная функция
             {
                 Console.WriteLine("File Info: " + FileName + " at " + FilePath);
             }
-        }
+        }     // заглушки теперь не нужны
 
     }
 }
