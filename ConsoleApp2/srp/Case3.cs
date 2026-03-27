@@ -10,29 +10,37 @@ namespace ConsoleApp2.srp
     {
         class Order
         {
-            public int OrderId;
-            public List<string> Items = new List<string>();
+            public int OrderId { get; set; };
+            public List<string> Items {get; set;} = new List<string>();
 
             public void AddItem(string item)
             {
                 Items.Add(item);
             }
-
-            public void SaveToDatabase()
+        }
+        class OrderRepostory
+        {
+            public void SaveToDatabase(Order order)
             {
                 Console.WriteLine("Order saved to database!");
             }
+        }
 
-            public void PrintOrder()
+        class OrderPrinter
+        {
+            public void Print(Order order)
             {
-                Console.WriteLine("Order #" + OrderId);
-                foreach (var item in Items)
+                Console.WriteLine("Order #" + order.OrderId);
+                foreach (var item in order.Items)
                 {
                     Console.WriteLine(" - " + item);
                 }
             }
+        }
 
-            public void SendOrderConfirmation()
+        class OrderNotificationServise
+        {
+            public void SendOrderConfirmation(Order order)
             {
                 Console.WriteLine("Order confirmation email sent!");
             }
@@ -44,10 +52,16 @@ namespace ConsoleApp2.srp
             {
                 Order order = new Order();
                 order.AddItem("Laptop");
-                order.PrintOrder();
-                order.SaveToDatabase();
-                order.SendOrderConfirmation();
+                
+                OrderPrinter printer = new OrderPrinter();
+                printer.Print(order);
+                
+                OrderRepository repository =  new OrderRepository();
+                repo.Save(order);
+
+                OrderNotificationService notifier = new OrderNotificationService();
+                notifier.SendConfirmation(order);
             }
         }
-    }
 }
+
