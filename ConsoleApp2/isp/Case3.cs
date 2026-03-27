@@ -1,23 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace ConsoleApp2.isp
 {
     internal class Case3
     {
-        public interface IFileRoleOperations
+        public interface IFileOpenable
         {
             void OpenFile();
+        }
+
+        public interface IFileReadable
+        {
             string ReadFile();
+        }
+
+        public interface IFileWritable
+        {
             void WriteFile(string content);
+        }
+
+        public interface IFileShareable
+        {
             void ShareFile(string recipient);
+        }
+
+        public interface IFileArchivable
+        {
             void ArchiveFile();
         }
 
-        public class StandardFile : IFileRoleOperations
+        public class StandardFile : IFileOpenable, IFileReadable, IFileWritable, IFileShareable, IFileArchivable
         {
             public string FileName { get; set; }
             public string FilePath { get; set; }
@@ -29,37 +39,25 @@ namespace ConsoleApp2.isp
             }
 
             public void OpenFile()
-            {
-                Console.WriteLine("Opening file " + FileName + " at " + FilePath);
-            }
+                => Console.WriteLine("Opening file " + FileName + " at " + FilePath);
 
             public string ReadFile()
-            {
-                return "Contents of " + FileName;
-            }
+                => "Contents of " + FileName;
 
             public void WriteFile(string content)
-            {
-                Console.WriteLine("Writing to file " + FileName + ": " + content);
-            }
+                => Console.WriteLine("Writing to file " + FileName + ": " + content);
 
             public void ShareFile(string recipient)
-            {
-                Console.WriteLine("Sharing file " + FileName + " with " + recipient);
-            }
+                => Console.WriteLine("Sharing file " + FileName + " with " + recipient);
 
             public void ArchiveFile()
-            {
-                Console.WriteLine("Archiving file " + FileName);
-            }
+                => Console.WriteLine("Archiving file " + FileName);
 
             public void GetFileDetails()
-            {
-                Console.WriteLine("File details: " + FileName + ", located at " + FilePath);
-            }
+                => Console.WriteLine("File details: " + FileName + ", located at " + FilePath);
         }
 
-        public class ReadOnlyFile : IFileRoleOperations
+        public class ReadOnlyFile : IFileOpenable, IFileReadable
         {
             public string FileName { get; set; }
             public string FilePath { get; set; }
@@ -71,35 +69,13 @@ namespace ConsoleApp2.isp
             }
 
             public void OpenFile()
-            {
-                Console.WriteLine("Opening read-only file " + FileName + " at " + FilePath);
-            }
+                => Console.WriteLine("Opening read-only file " + FileName + " at " + FilePath);
 
             public string ReadFile()
-            {
-                return "Read-only content from " + FileName;
-            }
-
-            public void WriteFile(string content)
-            {
-                throw new NotSupportedException("Cannot write to a read-only file " + FileName);
-            }
-
-            public void ShareFile(string recipient)
-            {
-                throw new NotSupportedException("Sharing is not supported for read-only file " + FileName);
-            }
-
-            public void ArchiveFile()
-            {
-                throw new NotSupportedException("Archiving is not supported for read-only file " + FileName);
-            }
+                => "Read-only content from " + FileName;
 
             public void GetFileInfo()
-            {
-                Console.WriteLine("File Info: " + FileName + " at " + FilePath);
-            }
+                => Console.WriteLine("File Info: " + FileName + " at " + FilePath);
         }
-
     }
 }
