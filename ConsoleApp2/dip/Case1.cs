@@ -8,9 +8,15 @@ namespace ConsoleApp2.dip
 {
     internal class Case1
     {
-        public class EmailSender
+        public interface INotificationSender
         {
-            public string SmtpServer { get; set; } 
+            void Send(string recipient, string subject, string message);
+            void Log(string log);
+        }
+
+        public class EmailSender : INotificationSender
+        {
+            public string SmtpServer { get; set; }
             public int Port { get; set; }
 
             public EmailSender(string smtpServer, int port)
@@ -19,22 +25,25 @@ namespace ConsoleApp2.dip
                 Port = port;
             }
 
-            public void Connect() 
+            private void Connect()
             {
                 Console.WriteLine("Connecting to SMTP server " + SmtpServer + ":" + Port);
             }
 
-            public void SendEmail(string recipient, string subject, string message)
-            {
-                Console.WriteLine("Sending email to " + recipient + " with subject " + subject);
-            }
-
-            public void Disconnect()
+            private void Disconnect()
             {
                 Console.WriteLine("Disconnecting from SMTP server " + SmtpServer);
             }
 
-            public void LogEmail(string log)
+            public void Send(string recipient, string subject, string message)
+            {
+                Connect();
+                Console.WriteLine("Sending email to " + recipient + " with subject " + subject);
+                Console.WriteLine("Message: " + message);
+                Disconnect();
+            }
+
+            public void Log(string log)
             {
                 Console.WriteLine("Logging email: " + log);
             }
@@ -42,25 +51,23 @@ namespace ConsoleApp2.dip
 
         public class Notifier
         {
-            private EmailSender _emailSender;
-            public string NotifierName { get; set; }
+            private readonly INotificationSender _notificationSender;
+            public string NotifierName { get; private set; }
 
-            public Notifier(string name)
+            public Notifier(string name, INotificationSender notificationSender)
             {
                 NotifierName = name;
-                _emailSender = new EmailSender("smtp.example.com", 25);
+                _notificationSender = notificationSender;
             }
 
-            public void NotifyByEmail(string recipient, string subject, string message)
+            public void Notify(string recipient, string subject, string message)
             {
-                _emailSender.Connect();
-                _emailSender.SendEmail(recipient, subject, message);
-                _emailSender.Disconnect();
+                _notificationSender.Send(recipient, subject, message);
             }
 
             public void LogNotification(string log)
             {
-                _emailSender.LogEmail(log);
+                _notificationSender.Log(log);
             }
 
             public void UpdateNotifierName(string newName)
@@ -74,6 +81,5 @@ namespace ConsoleApp2.dip
                 Console.WriteLine("Notifier: " + NotifierName);
             }
         }
-
     }
 }
