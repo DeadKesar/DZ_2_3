@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+using System.IO;
 
 namespace ConsoleApp2.srp
 {
@@ -10,29 +7,49 @@ namespace ConsoleApp2.srp
     {
         class Employee
         {
-            public string Name;
-            public double Salary;
+            public string Name { get; set; }
+            public double Salary { get; private set; }
+
+            public Employee(string name, double salary)
+            {
+                Name = name;
+                Salary = salary;
+            }
 
             public void SetSalary(double amount)
             {
                 Salary = amount;
             }
+        }
 
-            public void PrintInfo()
+        class EmployeePrinter
+        {
+            public void PrintInfo(Employee employee)
             {
-                Console.WriteLine("Employee: " + Name + " Salary: $" + Salary);
+                Console.WriteLine($"Employee: {employee.Name} Salary: ${employee.Salary}");
+            }
+        }
+
+        class EmployeeFileRepository
+        {
+            private readonly string _filePath;
+
+            public EmployeeFileRepository(string filePath)
+            {
+                _filePath = filePath;
             }
 
-            public void SaveToFile()
+            public void Save(Employee employee)
             {
-                File.WriteAllText("employee.txt", Name + " - " + Salary);
+                File.WriteAllText(_filePath, $"{employee.Name} - {employee.Salary}");
                 Console.WriteLine("Employee saved to file!");
             }
 
-            public void LoadFromFile()
+            public string Load()
             {
-                string data = File.ReadAllText("employee.txt");
+                string data = File.ReadAllText(_filePath);
                 Console.WriteLine("Loaded: " + data);
+                return data;
             }
         }
 
@@ -40,11 +57,12 @@ namespace ConsoleApp2.srp
         {
             static void Main()
             {
-                Employee emp = new Employee();
-                emp.Name = "John";
-                emp.SetSalary(5000);
-                emp.PrintInfo();
-                emp.SaveToFile();
+                Employee emp = new Employee("John", 5000);
+                EmployeePrinter printer = new EmployeePrinter();
+                EmployeeFileRepository repository = new EmployeeFileRepository("employee.txt");
+                printer.PrintInfo(emp);
+                repository.Save(emp);
+                repository.Load();
             }
         }
     }
