@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+using System.IO;
 
 namespace ConsoleApp2.srp
 {
     class Case4
     {
+        // только данные сотрудника
         class Employee
         {
             public string Name;
@@ -17,21 +15,31 @@ namespace ConsoleApp2.srp
             {
                 Salary = amount;
             }
+        }
 
-            public void PrintInfo()
+        // только отображение
+        class EmployeePrinter
+        {
+            public void PrintInfo(Employee emp)
             {
-                Console.WriteLine("Employee: " + Name + " Salary: $" + Salary);
+                Console.WriteLine("Employee: " + emp.Name + " Salary: $" + emp.Salary);
             }
+        }
 
-            public void SaveToFile()
+        // только файловые операции
+        class EmployeeRepository
+        {
+            private const string FilePath = "employee.txt";
+
+            public void Save(Employee emp)
             {
-                File.WriteAllText("employee.txt", Name + " - " + Salary);
+                File.WriteAllText(FilePath, emp.Name + " - " + emp.Salary);
                 Console.WriteLine("Employee saved to file!");
             }
 
-            public void LoadFromFile()
+            public void Load()
             {
-                string data = File.ReadAllText("employee.txt");
+                string data = File.ReadAllText(FilePath);
                 Console.WriteLine("Loaded: " + data);
             }
         }
@@ -43,8 +51,12 @@ namespace ConsoleApp2.srp
                 Employee emp = new Employee();
                 emp.Name = "John";
                 emp.SetSalary(5000);
-                emp.PrintInfo();
-                emp.SaveToFile();
+
+                EmployeePrinter printer = new EmployeePrinter();
+                printer.PrintInfo(emp);
+
+                EmployeeRepository repo = new EmployeeRepository();
+                repo.Save(emp);
             }
         }
     }
