@@ -8,16 +8,32 @@ namespace ConsoleApp2.isp
 {
     internal class Case3
     {
-        public interface IFileRoleOperations
+        public interface IFileOpener
         {
             void OpenFile();
+        }
+
+        public interface IFileReader
+        {
             string ReadFile();
+        }
+
+        public interface IFileWriter
+        {
             void WriteFile(string content);
+        }
+
+        public interface IFileSharer
+        {
             void ShareFile(string recipient);
+        }
+
+        public interface IFileArchiver
+        {
             void ArchiveFile();
         }
 
-        public class StandardFile : IFileRoleOperations
+        public class StandardFile : IFileOpener, IFileReader, IFileWriter, IFileSharer, IFileArchiver
         {
             public string FileName { get; set; }
             public string FilePath { get; set; }
@@ -59,7 +75,7 @@ namespace ConsoleApp2.isp
             }
         }
 
-        public class ReadOnlyFile : IFileRoleOperations
+        public class ReadOnlyFile : IFileOpener, IFileReader
         {
             public string FileName { get; set; }
             public string FilePath { get; set; }
@@ -80,26 +96,10 @@ namespace ConsoleApp2.isp
                 return "Read-only content from " + FileName;
             }
 
-            public void WriteFile(string content)
-            {
-                throw new NotSupportedException("Cannot write to a read-only file " + FileName);
-            }
-
-            public void ShareFile(string recipient)
-            {
-                throw new NotSupportedException("Sharing is not supported for read-only file " + FileName);
-            }
-
-            public void ArchiveFile()
-            {
-                throw new NotSupportedException("Archiving is not supported for read-only file " + FileName);
-            }
-
             public void GetFileInfo()
             {
-                Console.WriteLine("File Info: " + FileName + " at " + FilePath);
+                Console.WriteLine("File info: " + FileName + " at " + FilePath);
             }
         }
-
     }
 }
