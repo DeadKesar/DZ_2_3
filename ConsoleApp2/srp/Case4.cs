@@ -3,61 +3,53 @@ using System.IO;
 
 namespace ConsoleApp2.srp
 {
-    class Case4
+    // только данные сотрудника
+    class Employee
     {
-        // только данные сотрудника
-        class Employee
-        {
-            public string Name;
-            public double Salary;
+        public string Name { get; set; }
+        public double Salary { get; set; }
+    }
 
-            public void SetSalary(double amount)
-            {
-                Salary = amount;
-            }
+    // только отображение
+    class EmployeePrinter
+    {
+        public void PrintInfo(Employee emp)
+        {
+            Console.WriteLine("Employee: " + emp.Name + " Salary: $" + emp.Salary);
+        }
+    }
+
+    // только файловые операции
+    class EmployeeRepository
+    {
+        private const string FilePath = "employee.txt";
+
+        public void Save(Employee emp)
+        {
+            File.WriteAllText(FilePath, emp.Name + " - " + emp.Salary);
+            Console.WriteLine("Employee saved to file!");
         }
 
-        // только отображение
-        class EmployeePrinter
+        public void Load()
         {
-            public void PrintInfo(Employee emp)
-            {
-                Console.WriteLine("Employee: " + emp.Name + " Salary: $" + emp.Salary);
-            }
+            string data = File.ReadAllText(FilePath);
+            Console.WriteLine("Loaded: " + data);
         }
+    }
 
-        // только файловые операции
-        class EmployeeRepository
+    class Program
+    {
+        static void Main()
         {
-            private const string FilePath = "employee.txt";
+            Employee emp = new Employee();
+            emp.Name = "John";
+            emp.Salary = 5000;
 
-            public void Save(Employee emp)
-            {
-                File.WriteAllText(FilePath, emp.Name + " - " + emp.Salary);
-                Console.WriteLine("Employee saved to file!");
-            }
+            EmployeePrinter printer = new EmployeePrinter();
+            printer.PrintInfo(emp);
 
-            public void Load()
-            {
-                string data = File.ReadAllText(FilePath);
-                Console.WriteLine("Loaded: " + data);
-            }
-        }
-
-        class Program
-        {
-            static void Main()
-            {
-                Employee emp = new Employee();
-                emp.Name = "John";
-                emp.SetSalary(5000);
-
-                EmployeePrinter printer = new EmployeePrinter();
-                printer.PrintInfo(emp);
-
-                EmployeeRepository repo = new EmployeeRepository();
-                repo.Save(emp);
-            }
+            EmployeeRepository repo = new EmployeeRepository();
+            repo.Save(emp);
         }
     }
 }
