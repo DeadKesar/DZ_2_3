@@ -1,5 +1,6 @@
 using System;
 
+
 namespace ConsoleApp2.isp
 {
     class Program
