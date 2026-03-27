@@ -1,58 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.lsp
 {
     internal class Case2
     {
-        public class BankAccount
+        // бьазовый контракт
+        public interface IAccount
+        {
+            string AccountNumber { get; }
+            double Balance { get; }
+            string GetAccountInfo();
+            void UpdateAccountDetails();
+        }
+
+        // расширенный контракт
+        public interface ITransactableAccount : IAccount
+        {
+            void Deposit(double amount);
+            void Withdraw(double amount);
+            void Transfer(ITransactableAccount target, double amount);
+        }
+
+        public class BankAccount : ITransactableAccount
         {
             public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
             public double Balance { get; set; }
 
-            public virtual void Deposit(double amount)
+            public void Deposit(double amount)
             {
                 Balance += amount;
                 Console.WriteLine("Deposited " + amount + " into account " + AccountNumber);
             }
 
-            public virtual void Withdraw(double amount)
+            public void Withdraw(double amount)
             {
                 Balance -= amount;
                 Console.WriteLine("Withdrew " + amount + " from account " + AccountNumber);
             }
 
-            public virtual void Transfer(BankAccount targetAccount, double amount)
+            public void Transfer(ITransactableAccount target, double amount)
             {
                 Withdraw(amount);
-                targetAccount.Deposit(amount);
-                Console.WriteLine("Transferred " + amount + " from account " + AccountNumber + " to " + targetAccount.AccountNumber);
+                target.Deposit(amount);
+                Console.WriteLine("Transferred " + amount + " from " + AccountNumber + " to " + target.AccountNumber);
             }
 
-            public virtual string GetAccountInfo()
+            public string GetAccountInfo()
             {
                 return "Account: " + AccountNumber + " with balance: " + Balance;
             }
 
-            public virtual void UpdateAccountDetails()
+            public void UpdateAccountDetails()
             {
                 Console.WriteLine("Updating account details for " + AccountNumber);
             }
         }
 
-        public class FrozenAccount : BankAccount
+        public class FrozenAccount : IAccount
         {
-            public bool IsFrozen { get; set; } = true;
+            public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
+            public double Balance { get; set; }
+            public bool IsFrozen { get; private set; } = true;
 
-            public override void Withdraw(double amount)
-            { }
-
-            public override void Deposit(double amount)
+            public string GetAccountInfo()
             {
-                Console.WriteLine("Cannot deposit to a frozen account " + AccountNumber);
+                return "Frozen account: " + AccountNumber + " with balance: " + Balance;
+            }
+
+            public void UpdateAccountDetails()
+            {
+                Console.WriteLine("Updating account details for " + AccountNumber);
             }
 
             public void Unfreeze()
@@ -68,5 +85,19 @@ namespace ConsoleApp2.lsp
             }
         }
 
+        class Program
+        {
+            static void Main()
+            {
+                BankAccount account = new BankAccount();
+                account.Deposit(1000);
+                account.Withdraw(200);
+                Console.WriteLine(account.GetAccountInfo());
+
+                FrozenAccount frozen = new FrozenAccount { Balance = 500 };
+                Console.WriteLine(frozen.GetAccountInfo());
+                frozen.Unfreeze();
+            }
+        }
     }
 }
