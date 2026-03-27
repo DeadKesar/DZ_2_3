@@ -51,7 +51,7 @@ namespace ConsoleApp2.ocp
             {
                 AreaCalculator calculator = new AreaCalculator();
 
-                Console.WriteLine("Circle area: "    + calculator.Calculate(new Circle(5)));
+                Console.WriteLine("Circle area:  "    + calculator.Calculate(new Circle(5)));
                 Console.WriteLine("Rectangle area: " + calculator.Calculate(new Rectangle(4, 6)));
                 Console.WriteLine("Triangle area: "  + calculator.Calculate(new Triangle(3, 8)));
             }
