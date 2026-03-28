@@ -85,7 +85,6 @@ namespace ConsoleApp2.lsp
         {
             public string AccountNumber { get; private set; } = Guid.NewGuid().ToString();
             public double Balance { get; private set; } // Публичный сет это нарушение инкапсуляции 
-            public bool IsFrozen { get; private set; } = true; // Не понимаю смысл флага, удалил бы
 
             // Конструктор вместо публичного сета
             public FrozenAccount(double initialBalance = 0)
@@ -98,18 +97,6 @@ namespace ConsoleApp2.lsp
 
             public void UpdateAccountDetails() =>
                 Console.WriteLine("Updating account details for "+ AccountNumber);
-
-            public void Unfreeze()
-            {
-                IsFrozen = false;
-                Console.WriteLine("Account " + AccountNumber + " is now unfrozen");
-            }
-
-            public void Freeze()
-            {
-                IsFrozen = true;
-                Console.WriteLine("Account " + AccountNumber + " is frozen again");
-            }
         }
 
     }
