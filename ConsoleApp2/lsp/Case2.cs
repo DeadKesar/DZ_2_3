@@ -8,64 +8,95 @@ namespace ConsoleApp2.lsp
 {
     internal class Case2
     {
-        public class BankAccount
+        // Базовый интерфейс-основа
+        public interface IAccount
         {
-            public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
-            public double Balance { get; set; }
+            string AccountNumber { get; }
+            double Balance { get; }
+            string GetAccountInfo(); 
+            void UpdateAccountDetails();
+        }
 
-            public virtual void Deposit(double amount)
+        // Интерфейс для аккаунтов способных к транзакциям
+        public interface ITransactableAccount : IAccount
+        {
+            void Deposit(double amount);
+            void Withdraw(double amount);
+            void Transfer(ITransactableAccount target, double amount);
+        }
+
+        // Некий активный счёт, на данном уровне не важно - какой он, юридический или физический
+        public class BankAccount : ITransactableAccount
+        {
+            public string AccountNumber { get; private set; } = Guid.NewGuid().ToString();
+            public double Balance { get; private set; } // Публичный сет это нарушение инкапсуляции
+
+            // Конструктор вместо публичного сета
+            public BankAccount(double initialBalance = 0)
             {
+                if (initialBalance < 0)
+                    throw new ArgumentException("Initial balance cannot be negative.");
+                Balance = initialBalance;
+            }
+
+            public void Deposit(double amount)
+            {
+                // Добавил проверку на необходимую положительность
+                if (amount <= 0)
+                    throw new ArgumentException("Deposit amount must be positive.");
+
                 Balance += amount;
                 Console.WriteLine("Deposited " + amount + " into account " + AccountNumber);
             }
 
-            public virtual void Withdraw(double amount)
+            public void Withdraw(double amount)
             {
+                // Добавил проверки на границы 
+                if (amount <= 0)
+                    throw new ArgumentException("Withdrawal amount must be positive.");
+
+                if (amount > Balance)
+                    throw new InvalidOperationException("Insufficient funds.");
+
                 Balance -= amount;
                 Console.WriteLine("Withdrew " + amount + " from account " + AccountNumber);
             }
 
-            public virtual void Transfer(BankAccount targetAccount, double amount)
+            public void Transfer(ITransactableAccount target, double amount)
             {
+                // Добавил проверку на предотвращение оффшоров
+                if (target == null)
+                    throw new ArgumentNullException(nameof(target));
+
                 Withdraw(amount);
-                targetAccount.Deposit(amount);
-                Console.WriteLine("Transferred " + amount + " from account " + AccountNumber + " to " + targetAccount.AccountNumber);
+                target.Deposit(amount);
+                Console.WriteLine("Transferred " + amount + " from " + AccountNumber + " to " + target.AccountNumber);
             }
 
-            public virtual string GetAccountInfo()
-            {
-                return "Account: " + AccountNumber + " with balance: " + Balance;
-            }
+            public string GetAccountInfo() =>
+                "Account: " + AccountNumber + " with balance: " + Balance;
 
-            public virtual void UpdateAccountDetails()
-            {
+            public void UpdateAccountDetails() =>
                 Console.WriteLine("Updating account details for " + AccountNumber);
-            }
         }
 
-        public class FrozenAccount : BankAccount
+        // Счёт под санкциями
+        public class FrozenAccount : IAccount
         {
-            public bool IsFrozen { get; set; } = true;
+            public string AccountNumber { get; private set; } = Guid.NewGuid().ToString();
+            public double Balance { get; private set; } // Публичный сет это нарушение инкапсуляции 
 
-            public override void Withdraw(double amount)
-            { }
-
-            public override void Deposit(double amount)
+            // Конструктор вместо публичного сета
+            public FrozenAccount(double initialBalance = 0)
             {
-                Console.WriteLine("Cannot deposit to a frozen account " + AccountNumber);
+                Balance = initialBalance;
             }
 
-            public void Unfreeze()
-            {
-                IsFrozen = false;
-                Console.WriteLine("Account " + AccountNumber + " is now unfrozen");
-            }
+            public string GetAccountInfo() =>
+                "Frozen account: " + AccountNumber + " with balance: " + Balance;
 
-            public void Freeze()
-            {
-                IsFrozen = true;
-                Console.WriteLine("Account " + AccountNumber + " is frozen again");
-            }
+            public void UpdateAccountDetails() =>
+                Console.WriteLine("Updating account details for "+ AccountNumber);
         }
 
     }
