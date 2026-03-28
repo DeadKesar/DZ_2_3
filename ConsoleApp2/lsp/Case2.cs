@@ -46,7 +46,7 @@ namespace ConsoleApp2.lsp
                     throw new ArgumentException("Deposit amount must be positive.");
 
                 Balance += amount;
-                Console.WriteLine($"Deposited {amount} into account {AccountNumber}");
+                Console.WriteLine("Deposited " + amount + " into account " + AccountNumber);
             }
 
             public void Withdraw(double amount)
@@ -59,7 +59,7 @@ namespace ConsoleApp2.lsp
                     throw new InvalidOperationException("Insufficient funds.");
 
                 Balance -= amount;
-                Console.WriteLine($"Withdrew {amount} from account {AccountNumber}");
+                Console.WriteLine("Withdrew " + amount + " from account " + AccountNumber);
             }
 
             public void Transfer(ITransactableAccount target, double amount)
@@ -70,14 +70,14 @@ namespace ConsoleApp2.lsp
 
                 Withdraw(amount);
                 target.Deposit(amount);
-                Console.WriteLine($"Transferred {amount} from {AccountNumber} to {target.AccountNumber}");
+                Console.WriteLine("Transferred " + amount + " from " + AccountNumber + " to " + target.AccountNumber);
             }
 
             public string GetAccountInfo() =>
-                $"Account: {AccountNumber} with balance: {Balance}";
+                "Account: " + AccountNumber + " with balance: " + Balance;
 
             public void UpdateAccountDetails() =>
-                Console.WriteLine($"Updating account details for {AccountNumber}");
+                Console.WriteLine("Updating account details for " + AccountNumber);
         }
 
         // Счёт под санкциями
@@ -94,21 +94,21 @@ namespace ConsoleApp2.lsp
             }
 
             public string GetAccountInfo() =>
-                $"Frozen account: {AccountNumber} with balance: {Balance}";
+                "Frozen account: " + AccountNumber + " with balance: " + Balance;
 
             public void UpdateAccountDetails() =>
-                Console.WriteLine($"Updating account details for {AccountNumber}");
+                Console.WriteLine("Updating account details for "+ AccountNumber);
 
             public void Unfreeze()
             {
                 IsFrozen = false;
-                Console.WriteLine($"Account {AccountNumber} is now unfrozen");
+                Console.WriteLine("Account " + AccountNumber + " is now unfrozen");
             }
 
             public void Freeze()
             {
                 IsFrozen = true;
-                Console.WriteLine($"Account {AccountNumber} is frozen again");
+                Console.WriteLine("Account " + AccountNumber + " is frozen again");
             }
         }
 
