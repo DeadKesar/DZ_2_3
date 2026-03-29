@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +8,14 @@ namespace ConsoleApp2.lsp
 {
     internal class Case1
     {
-        private class Vehicle
+    /*
+    1. электрокар больше не наследует метод refuel. для машин на бензине выделил отдельный интерфейс IRefuelable.
+    2. из базового класса vehicle удалил свойства бензобака (FuelLevel, FuelCapacity), они были перенесены в класс BenzCar.
+    3. класс vehicle и метод drive сделал абстрактными чтобы у каждого типа транспорта была своя логика.
+    */
+        private abstract class Vehicle
         {
             public string LicensePlate { get; set; }
-            public double FuelLevel { get; set; }
-            public double FuelCapacity { get; set; }
 
             public virtual void StartEngine()
             {
@@ -24,7 +27,20 @@ namespace ConsoleApp2.lsp
                 Console.WriteLine("Engine stopped for vehicle " + LicensePlate);
             }
 
-            public virtual void Refuel(double amount)
+            public abstract void Drive(double distance);
+        }
+
+        private interface IRefuelable
+        {
+            void Refuel(double amount);
+            double GetFuelLevel();
+        }
+
+        private class BenzCar : Vehicle, IRefuelable
+        {   
+            public double FuelLevel { get; set; }
+            public double FuelCapacity { get; set; }
+            public void Refuel(double amount)
             {
                 FuelLevel += amount;
                 Console.WriteLine("Refueled " + amount + " liters for vehicle " + LicensePlate);
@@ -35,10 +51,10 @@ namespace ConsoleApp2.lsp
                 return FuelLevel;
             }
 
-            public virtual void Drive(double distance)
+            public override void Drive(double distance)
             {
                 FuelLevel -= distance * 0.1;
-                System.Console.WriteLine("Vehicle " + LicensePlate + " drove " + distance + " km");
+                Console.WriteLine("Vehicle " + LicensePlate + " drove " + distance + " km");
             }
         }
 
@@ -46,11 +62,6 @@ namespace ConsoleApp2.lsp
         {
             public double BatteryLevel { get; set; }
             public double BatteryCapacity { get; set; }
-
-            public override void Refuel(double amount)
-            {
-                throw new NotSupportedException("Electric vehicles cannot be refueled with fuel");
-            }
 
             public override void StartEngine()
             {
