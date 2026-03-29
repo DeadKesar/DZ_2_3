@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,41 +10,61 @@ namespace ConsoleApp2.srp
     {
         class Employee
         {
-            public string Name;
-            public double Salary;
+            public string Name { get; private set; }
+            public double Salary { get; private set; }
 
             public void SetSalary(double amount)
             {
                 Salary = amount;
             }
 
-            public void PrintInfo()
+            public Employee(string name, double salary)
             {
-                Console.WriteLine("Employee: " + Name + " Salary: $" + Salary);
+                Name = name;
+                Salary = salary;
             }
 
-            public void SaveToFile()
+        }
+
+
+        static class EmployeeDisplay
+        {
+            public static void PrintInfo(Employee employee)
             {
-                File.WriteAllText("employee.txt", Name + " - " + Salary);
+                Console.WriteLine("Employee: " + employee.Name + " Salary: $" + employee.Salary);
+            }
+        }
+
+        static class EmployeeFiles
+        {
+            public static void SaveToFile(Employee employee)
+            {
+                File.WriteAllText("employee.txt", employee.Name + " - " + employee.Salary);
                 Console.WriteLine("Employee saved to file!");
             }
 
-            public void LoadFromFile()
+            public static void LoadFromFile()
             {
                 string data = File.ReadAllText("employee.txt");
                 Console.WriteLine("Loaded: " + data);
             }
         }
 
+/* 
+1. то, что напрямую не относится к employee, то есть сотруднику, поместил в отдельные статические классы.
+2. сделал приватные сеттеры для полей сотрудника.
+3. добавил конструктор с параметрами, чтобы было проще инициализировать объект
+*/
+
+
+
         class Program
         {
             static void Main()
             {
-                Employee emp = new Employee();
-                emp.Name = "John";
-                emp.SetSalary(5000);
-                emp.PrintInfo();
-                emp.SaveToFile();
+                Employee emp = new Employee("John", 5000);
+                EmployeeDisplay.PrintInfo(emp);
+                EmployeeFiles.SaveToFile(emp);
             }
         }
     }
