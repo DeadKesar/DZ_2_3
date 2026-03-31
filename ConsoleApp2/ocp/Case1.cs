@@ -1,40 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleApp2.ocp
+﻿namespace ConsoleApp2.ocp
 {
     class Case1
     {
-        interface ICoolGuy
-        {
-            void CallCoolGuy();
-        }
         class User
         {
-            private bool _isSelected;
-            private string _image;
+            // изменяю члены чтобы можно было управлять через другие классы
+            public bool IsSelected {get; }
+            public string Image {get; }
 
-            public User(bool isSelected, string image)
+            public bool IsCool { get; }
+
+            public User(bool isSelected, string image, bool isCool)
             {
-                _isSelected = isSelected;
-                _image = image;
+                IsSelected = isSelected;
+                Image = image;
+                IsCool = isCool;
             }
-            public void DrawUser()
+            public void DrawUser(IEnumerable<IUserFeatureDrawer> featureDrawers)
             {
-                if (_isSelected)
-                    DrawEllipseAroundUser();
-                if (_image != null)
-                    DrawImageOfUser();
-                if (this is ICoolGuy) // редкий случай
-                    DrawCoolGuyGlasses();
-                // И т. д.
+                // отрисовка присущая всем user 
+                DrawBaseUser();
+
+                // проходимся по последоват. способов отрисовки 
+                // Если этот способ может отрисовать что-то для user, то рисуем
+                foreach (var drawer in featureDrawers)
+                {
+                    if (drawer.CanDraw(this))
+                        drawer.Draw(this);
+                }
             }
-            void DrawEllipseAroundUser() { }
-            void DrawImageOfUser() { }
-            void DrawCoolGuyGlasses() { }
+            private void DrawBaseUser() { }
+        }
+        interface IUserFeatureDrawer
+        {
+            bool CanDraw(User user);
+            void Draw(User user);
+        }
+        // До этого для каждой новой отрисовки приходилось бы изменять уже рабочую версию, добавляя новые if и реализации.
+        // Сейчас мы можем не изменять имеющийся код, а расширять его. 
+        class SelectedUserDrawer : IUserFeatureDrawer
+        {
+            public bool CanDraw(User user) => user.IsSelected;
+
+            public void Draw(User user)
+            {
+                DrawEllipseAroundUser();
+            }
+
+            private void DrawEllipseAroundUser() { }
+        }
+
+        class ImageUserDrawer : IUserFeatureDrawer
+        {
+            public bool CanDraw(User user) => user.Image != null;
+
+            public void Draw(User user)
+            {
+                DrawImageOfUser();
+            }
+
+            private void DrawImageOfUser() { }
+        }
+
+        class CoolGuyDrawer : IUserFeatureDrawer
+        {
+            public bool CanDraw(User user) => user.IsCool;
+
+            public void Draw(User user)
+            {
+                DrawCoolGuyGlasses();
+            }
+
+            private void DrawCoolGuyGlasses() { }
         }
     }
 }
