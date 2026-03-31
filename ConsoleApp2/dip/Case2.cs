@@ -8,7 +8,15 @@ namespace ConsoleApp2.dip
 {
     internal class Case2
     {
-        public class Logger
+        public interface ILogger 
+        {
+            public void WriteLog(string log);
+            public void ClearLog();
+            public void ArchiveLog();
+            public void GetLogStatus();
+        }
+        
+        public class Logger : ILogger
         {
             public string FilePath { get; set; }
 
@@ -40,15 +48,15 @@ namespace ConsoleApp2.dip
 
         public class UserActivity
         {
-            private Logger _logger;
+            private readonly ILogger _logger;
             public string UserName { get; set; }
             public int ActivityCount { get; set; }
 
-            public UserActivity(string userName)
+            public UserActivity(string userName, ILogger logger)
             {
                 UserName = userName;
                 ActivityCount = 0;
-                _logger = new Logger("user_activity.log");
+                _logger = logger;
             }
 
             public void RecordActivity(string activity)
