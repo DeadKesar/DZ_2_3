@@ -1,17 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp2.dip
 {
     internal class Case1
     {
-        public class EmailSender
+        public interface IMessageSender
         {
-            public string SmtpServer { get; set; } 
-            public int Port { get; set; }
+            void Send(string recipient, string subject, string message);
+        }
+        
+        public interface ILogger
+        {
+            void Log(string message);
+        }
+        
+        public class EmailLogger : ILogger
+        {
+            public void Log(string message)
+            {
+                Console.WriteLine("Logging email: " + message);
+            }
+        }
+        
+        public class EmailSender : IMessageSender
+        {
+            public string SmtpServer { get; private set; } 
+            public int Port { get; private set; }
 
             public EmailSender(string smtpServer, int port)
             {
@@ -19,48 +33,45 @@ namespace ConsoleApp2.dip
                 Port = port;
             }
 
-            public void Connect() 
+            public void Send(string recipient, string subject, string message)
+            {
+                Connect();
+                Console.WriteLine("Sending email to " + recipient + " with subject " + subject + " with message: " + message);
+                Disconnect();
+            }
+            
+            private void Connect() 
             {
                 Console.WriteLine("Connecting to SMTP server " + SmtpServer + ":" + Port);
             }
-
-            public void SendEmail(string recipient, string subject, string message)
-            {
-                Console.WriteLine("Sending email to " + recipient + " with subject " + subject);
-            }
-
-            public void Disconnect()
+            
+            private void Disconnect()
             {
                 Console.WriteLine("Disconnecting from SMTP server " + SmtpServer);
-            }
-
-            public void LogEmail(string log)
-            {
-                Console.WriteLine("Logging email: " + log);
             }
         }
 
         public class Notifier
         {
-            private EmailSender _emailSender;
-            public string NotifierName { get; set; }
+            private readonly IMessageSender _messageSender;
+            private readonly ILogger _logger;
+            public string NotifierName { get; private set; }
 
-            public Notifier(string name)
+            public Notifier(string name, IMessageSender messageSender, ILogger logger)
             {
                 NotifierName = name;
-                _emailSender = new EmailSender("smtp.example.com", 25);
+                _messageSender = messageSender;
+                _logger = logger; 
             }
 
-            public void NotifyByEmail(string recipient, string subject, string message)
+            public void Notify(string recipient, string subject, string message)
             {
-                _emailSender.Connect();
-                _emailSender.SendEmail(recipient, subject, message);
-                _emailSender.Disconnect();
+                _messageSender.Send(recipient, subject, message);
             }
 
             public void LogNotification(string log)
             {
-                _emailSender.LogEmail(log);
+                _logger.Log(log);
             }
 
             public void UpdateNotifierName(string newName)
