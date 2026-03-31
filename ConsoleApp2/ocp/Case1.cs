@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleApp2.ocp
+﻿namespace ConsoleApp2.ocp
 {
     class Case1
     {
-        interface ICoolGuy
-        {
-            void CallCoolGuy();
-        }
         class User
         {
             // изменяю члены чтобы можно было управлять через другие классы
             public bool IsSelected {get; }
             public string Image {get; }
 
-            public User(bool isSelected, string image)
+            public bool IsCool { get; }
+
+            public User(bool isSelected, string image, bool isCool)
             {
                 IsSelected = isSelected;
                 Image = image;
+                IsCool = isCool;
             }
             public void DrawUser(IEnumerable<IUserFeatureDrawer> featureDrawers)
             {
@@ -71,7 +64,7 @@ namespace ConsoleApp2.ocp
 
         class CoolGuyDrawer : IUserFeatureDrawer
         {
-            public bool CanDraw(User user) => user is ICoolGuy;
+            public bool CanDraw(User user) => user.IsCool;
 
             public void Draw(User user)
             {
