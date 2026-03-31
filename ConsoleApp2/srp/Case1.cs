@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,66 +51,68 @@ namespace ConsoleApp2.srp
             }
         }
 
+    }
 
-        #region Котов + Веденский + Супрун
-        //using System.Dynamic;
-        //using System.Threading.Channels;
-        //using System.Xml.Linq;
+    //класс Client нарушал приницп SRP
+    //вынес отправку сообщений в отдельный класс MessageService
+    //добавил интерфейс IMessageChannel чтобы не было зависимости от класса Channel, т.е. нарушение DIP
+    class Case1Fixed 
+    {
+        //интерфейс с методом SendMessage
+        public interface IMessageChannel
+        {
+            void SendMessage(string source, string dest, string message);
+        }
+        
+        public class Channel:IMessageChannel
+        {
+            private string _host;
+            public Channel(string host)
+            {
+                this._host = host;
+            }
 
-        //public class Channel
-        //{
-        //    private string _host;
-        //    public Channel(string host)
-        //    {
-        //        _host = host;
-        //    }
+            public void SendMessage(string source, string dest, string message)
+            {
+                Console.WriteLine($"[SEND {_host}] {source} - {dest}: {message};");
+            }
+        }
 
-        //    public void SendMessage(string source, string dest, string message)
-        //    {
-        //        Console.WriteLine($"[SEND {_host}] {source} - {dest}: {message};");
-        //    }
-        //}
+        public class Client
+        {
+            private Guid _id;
+            private string _fullName;
 
-        //public class Client
-        //{
-        //    private Guid _id;
-        //    private string _fullName;
-        //    private Channel _channel;
+            public string Name
+            {
+                get { return _fullName; }
+            }
 
-        //    public string Name
-        //    {
-        //        get { return _fullName; }
-        //    }
+            public Client(Guid id, string fullName)
+            {
+                _id = id;
+                _fullName = fullName;
+            }
 
-        //    public Client(Guid id, string fullName, Channel channel)
-        //    {
-        //        _id = id;
-        //        _fullName = fullName;
-        //        _channel = channel;
-        //    }
+            public string GetCurrentRenderedState()
+            {
+                return $"<id>{_id}</id>\n<fullname>{_fullName}</fullname>";
+            }
+        }
 
-        //    public string GetCurrentRenderedState()
-        //    {
-        //        return $"<id>{_id}</id>\n<fullname>{_fullName}</fullname>";
-        //    }
-        //}
-
-
-        //public class Dialogue
-        //{
-        //    Client sender;
-        //    Client reciever;
-        //    Channel channel;
-
-        //    public Dialogue()
-        //    {
-        //        //
-        //    }
-        //    public void SendMessage(string message)
-        //    {
-        //        channel.SendMessage(sender.Name, reciever.Name, message);
-        //    }
-        //}
-        #endregion
+        public class MessageService
+        {
+            private readonly IMessageChannel _channel;  
+            
+            public MessageService(IMessageChannel channel)  
+            {
+                _channel = channel;
+            }
+            
+            public void SendMessageToClient(Client sender, Client receiver, string message)
+            {
+                _channel.SendMessage(sender.Name, receiver.Name, message);
+            }
+        }
     }
 }
