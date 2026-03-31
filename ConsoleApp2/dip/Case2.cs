@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp2.dip
 {
@@ -13,7 +9,7 @@ namespace ConsoleApp2.dip
             public void WriteLog(string log);
             public void ClearLog();
             public void ArchiveLog();
-            public void GetLogStatus();
+            public void ShowLogStatus();
         }
         
         public class Logger : ILogger
@@ -40,7 +36,7 @@ namespace ConsoleApp2.dip
                 Console.WriteLine("Archiving log file " + FilePath);
             }
 
-            public void GetLogStatus()
+            public void ShowLogStatus()
             {
                 Console.WriteLine("Checking log status for file " + FilePath);
             }
