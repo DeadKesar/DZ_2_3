@@ -7,12 +7,16 @@ namespace ConsoleApp2.dip
         public interface ILogger 
         {
             public void WriteLog(string log);
-            public void ClearLog();
-            public void ArchiveLog();
             public void ShowLogStatus();
         }
+
+        public interface ILogMaintence 
+        {
+            public void ClearLog();
+            public void ArchiveLog();
+        }
         
-        public class Logger : ILogger
+        public class Logger : ILogger, ILogMaintence
         {
             public string FilePath { get; set; }
 
@@ -45,8 +49,8 @@ namespace ConsoleApp2.dip
         public class UserActivity
         {
             private readonly ILogger _logger;
-            public string UserName { get; set; }
-            public int ActivityCount { get; set; }
+            public string UserName { get; }
+            public int ActivityCount { get; private set; }
 
             public UserActivity(string userName, ILogger logger)
             {
