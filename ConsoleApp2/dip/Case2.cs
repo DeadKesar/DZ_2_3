@@ -1,18 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp2.dip
 {
     internal class Case2
     {
-        public class Logger
+        public interface ILogger 
         {
-            public string FilePath { get; set; }
+            public void WriteLog(string log);
+        }
 
-            public Logger(string filePath)
+        public interface ILogMaintence 
+        {
+            public void ClearLog();
+            public void ArchiveLog();
+            public void ShowLogStatus();
+        }
+
+        public interface IActivity
+        {
+            public void RecordActivity(string activity);
+            public void ResetActivityCount();
+            public void DisplayActivity();
+        }
+        
+        public class FileLogger : ILogger, ILogMaintence
+        {
+            public string FilePath { get; }
+
+            public FileLogger(string filePath)
             {
                 FilePath = filePath;
             }
@@ -32,23 +47,49 @@ namespace ConsoleApp2.dip
                 Console.WriteLine("Archiving log file " + FilePath);
             }
 
-            public void GetLogStatus()
+            public void ShowLogStatus()
             {
                 Console.WriteLine("Checking log status for file " + FilePath);
             }
         }
 
-        public class UserActivity
+        public class LogService
         {
-            private Logger _logger;
-            public string UserName { get; set; }
-            public int ActivityCount { get; set; }
+            private readonly ILogMaintence _logMaintence;
 
-            public UserActivity(string userName)
+            public LogService(ILogMaintence logMaintence)
+            {
+                _logMaintence = logMaintence;
+            }
+
+            public void ClearLog()
+            {
+                _logMaintence.ClearLog();
+            }
+            
+            public void ArchiveLog()
+            {
+                _logMaintence.ArchiveLog();
+            }
+            
+            public void ShowLogStatus()
+            {
+                _logMaintence.ShowLogStatus();
+            }
+        }
+
+        public class UserActivity : IActivity
+        {
+            private readonly ILogger _logger;
+            
+            public string UserName { get; }
+            public int ActivityCount { get; private set; }
+
+            public UserActivity(string userName, ILogger logger)
             {
                 UserName = userName;
                 ActivityCount = 0;
-                _logger = new Logger("user_activity.log");
+                _logger = logger;
             }
 
             public void RecordActivity(string activity)
@@ -63,14 +104,46 @@ namespace ConsoleApp2.dip
                 _logger.WriteLog("Reset activity count for " + UserName);
             }
 
-            public void ArchiveActivity()
+            public void DisplayActivity()
             {
-                _logger.ArchiveLog();
+                Console.WriteLine("User " + UserName + " has " + ActivityCount + " activities recorded.");
+            }
+        }
+
+        public class ActivityManager 
+        {
+            private readonly IActivity _activity;
+            private readonly LogService _logService;
+
+            public ActivityManager(IActivity activity, LogService logService)
+            {
+                _activity = activity;
+                _logService = logService;
+            }
+
+            public void RecordActivity(string activity)
+            {
+                _activity.RecordActivity(activity);
+            }
+
+            public void ResetActivityCount()
+            {
+                _activity.ResetActivityCount();
             }
 
             public void DisplayActivity()
             {
-                Console.WriteLine("User " + UserName + " has " + ActivityCount + " activities recorded.");
+                _activity.DisplayActivity();
+            }
+            
+            public void ArchiveActivity()
+            {
+                _logService.ArchiveLog();
+            }
+
+            public void ClearLog()
+            {
+                _logService.ClearLog();
             }
         }
 
