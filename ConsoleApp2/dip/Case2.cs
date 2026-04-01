@@ -7,20 +7,27 @@ namespace ConsoleApp2.dip
         public interface ILogger 
         {
             public void WriteLog(string log);
-            public void ShowLogStatus();
         }
 
         public interface ILogMaintence 
         {
             public void ClearLog();
             public void ArchiveLog();
+            public void ShowLogStatus();
+        }
+
+        public interface IActivity
+        {
+            public void RecordActivity(string activity);
+            public void ResetActivityCount();
+            public void DisplayActivity();
         }
         
-        public class Logger : ILogger, ILogMaintence
+        public class FileLogger : ILogger, ILogMaintence
         {
-            public string FilePath { get; set; }
+            public string FilePath { get; }
 
-            public Logger(string filePath)
+            public FileLogger(string filePath)
             {
                 FilePath = filePath;
             }
@@ -46,9 +53,35 @@ namespace ConsoleApp2.dip
             }
         }
 
-        public class UserActivity
+        public class LogService
+        {
+            private readonly ILogMaintence _logMaintence;
+
+            public LogService(ILogMaintence logMaintence)
+            {
+                _logMaintence = logMaintence;
+            }
+
+            public void ClearLog()
+            {
+                _logMaintence.ClearLog();
+            }
+            
+            public void ArchiveLog()
+            {
+                _logMaintence.ArchiveLog();
+            }
+            
+            public void ShowLogStatus()
+            {
+                _logMaintence.ShowLogStatus();
+            }
+        }
+
+        public class UserActivity : IActivity
         {
             private readonly ILogger _logger;
+            
             public string UserName { get; }
             public int ActivityCount { get; private set; }
 
@@ -71,14 +104,46 @@ namespace ConsoleApp2.dip
                 _logger.WriteLog("Reset activity count for " + UserName);
             }
 
-            public void ArchiveActivity()
+            public void DisplayActivity()
             {
-                _logger.ArchiveLog();
+                Console.WriteLine("User " + UserName + " has " + ActivityCount + " activities recorded.");
+            }
+        }
+
+        public class ActivityManager 
+        {
+            private readonly IActivity _activity;
+            private readonly LogService _logService;
+
+            public ActivityManager(IActivity activity, LogService logService)
+            {
+                _activity = activity;
+                _logService = logService;
+            }
+
+            public void RecordActivity(string activity)
+            {
+                _activity.RecordActivity(activity);
+            }
+
+            public void ResetActivityCount()
+            {
+                _activity.ResetActivityCount();
             }
 
             public void DisplayActivity()
             {
-                Console.WriteLine("User " + UserName + " has " + ActivityCount + " activities recorded.");
+                _activity.DisplayActivity();
+            }
+            
+            public void ArchiveActivity()
+            {
+                _logService.ArchiveLog();
+            }
+
+            public void ClearLog()
+            {
+                _logService.ClearLog();
             }
         }
 
