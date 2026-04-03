@@ -1,41 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.srp
 {
     class Case2
     {
-        class User
-        {
-            public string Name;
-            public string Email;
-            public string Password;
 
-            public void Register(string name, string email, string password)
+        public class User
+        {
+            public string Name { get; private set; }
+            public string Email { get; private set; }
+            public string Password { get; private set; }
+
+            public User(string name, string email, string password)
             {
                 Name = name;
                 Email = email;
                 Password = password;
-                Console.WriteLine("User registered!");
-            }
-
-            public void PrintUserInfo()
-            {
-                Console.WriteLine("User: " + Name + " Email: " + Email);
             }
 
             public void ChangePassword(string newPassword)
             {
                 Password = newPassword;
-                Console.WriteLine("Password changed!");
             }
+        }
 
-            public void SendEmail(string message)
+        public class UserService
+        {
+            public User Register(string name, string email, string password)
             {
-                Console.WriteLine("Email sent to " + Email + ": " + message);
+                var user = new User(name, email, password);
+                Console.WriteLine("User registered!"); 
+                return user;
+            }
+        }
+
+        public class EmailService
+        {
+            public void SendEmail(string toAddress, string message)
+            {
+                Console.WriteLine($"Email sent to {toAddress}: {message}");
+            }
+        }
+
+        
+        public class UserConsoleView
+        {
+            public void PrintUserInfo(User user)
+            {
+                Console.WriteLine($"User: {user.Name} Email: {user.Email}");
             }
         }
 
@@ -43,10 +55,13 @@ namespace ConsoleApp2.srp
         {
             public void Execute()
             {
-                User user = new User();
-                user.Register("Tim", "tim@example.com", "123456");
-                user.PrintUserInfo();
-                user.SendEmail("Hello!");
+                var userService = new UserService();
+                var emailService = new EmailService();
+                var userView = new UserConsoleView();
+
+                User user = userService.Register("Tim", "tim@example.com", "123456");
+                userView.PrintUserInfo(user);
+                emailService.SendEmail(user.Email, "Hello!");
             }
         }
     }
