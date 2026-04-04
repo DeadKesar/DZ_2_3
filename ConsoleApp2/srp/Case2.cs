@@ -8,34 +8,45 @@ namespace ConsoleApp2.srp
 {
     class Case2
     {
-        class User
+        class User // класс только для сущности пользователя
         {
             public string Name;
             public string Email;
             public string Password;
+        }
 
-            public void Register(string name, string email, string password)
+        class UserManager // отдельный класс для управлением пользователем
+        {
+            public User Register(string name, string email, string password)
             {
-                Name = name;
-                Email = email;
-                Password = password;
+                User user = new User();
+                user.Name = name;
+                user.Email = email;
+                user.Password = password;
                 Console.WriteLine("User registered!");
+                return user;
             }
 
-            public void PrintUserInfo()
+            public void ChangePassword(User user, string newPassword)
             {
-                Console.WriteLine("User: " + Name + " Email: " + Email);
-            }
-
-            public void ChangePassword(string newPassword)
-            {
-                Password = newPassword;
+                user.Password = newPassword;
                 Console.WriteLine("Password changed!");
             }
+        }
 
-            public void SendEmail(string message)
+        class UserPrinter // отдельный класс для печати пользователя
+        {
+            public void Print(User user)
             {
-                Console.WriteLine("Email sent to " + Email + ": " + message);
+                Console.WriteLine("User: " + user.Name + " Email: " + user.Email);
+            }
+        }
+
+        class EmailManager // отдельный класс для работы с почтой
+        {
+            public void SendEmail(string email, string message)
+            {
+                Console.WriteLine("Email sent to " + email + ": " + message);
             }
         }
 
@@ -43,10 +54,15 @@ namespace ConsoleApp2.srp
         {
             public void Execute()
             {
-                User user = new User();
-                user.Register("Tim", "tim@example.com", "123456");
-                user.PrintUserInfo();
-                user.SendEmail("Hello!");
+                UserManager userManagerService = new UserManager();
+
+                User user = userManagerService.Register("Tim", "tim@example.com", "123456");
+
+                UserPrinter printer = new UserPrinter();
+                printer.Print(user);
+
+                EmailManager emailSender = new EmailManager(); 
+                emailSender.SendEmail(user.Email, "Hello");
             }
         }
     }
