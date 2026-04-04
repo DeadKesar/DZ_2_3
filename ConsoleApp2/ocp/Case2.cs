@@ -1,110 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp2.ocp
 {
     class Case2
     {
-        class Circle
+        public abstract class Figure
         {
-            public double Radius;
+            public abstract double GetArea();  // у фигуры обязана быть реализация рассчета площади, для этого нужен abstract
+        }
+        // очень удобно код подходящий под принцип ocp был расположен ниже, не мог не воспользоваться данным подарком судьбы :)
+        class Circle : Figure
+        {
+            public double Radius { get; set; }
             public Circle(double radius)
             {
                 Radius = radius;
             }
-            public double GetArea()
+            public override double GetArea()
             {
                 return Math.PI * Radius * Radius;
             }
         }
-        class Rectangle
+        class Rectangle : Figure
         {
-            public double Width;
-            public double Height;
+            public double Width { get; set; }
+            public double Height { get; set; }
             public Rectangle(double width, double height)
             {
                 Width = width;
                 Height = height;
             }
-            public double GetArea()
+            public override double GetArea()
             {
                 return Width * Height;
             }
         }
-        class AreaCalculator
-        {
-            public double Calculate(object shape)
-            {
-                if (shape is Circle)
-                {
-                    return ((Circle)shape).GetArea();
-                }
-                else if (shape is Rectangle)
-                {
-                    return ((Rectangle)shape).GetArea();
-                }
-                return 0;
-            }
-        }
-        class Program
+        class Application
         {
             static void Main()
             {
-                Circle c = new Circle(5);
-                Rectangle r = new Rectangle(4, 6);
-                AreaCalculator calculator = new AreaCalculator();
-                Console.WriteLine("Circle area: " + calculator.Calculate(c));
-                Console.WriteLine("Rectangle area: " + calculator.Calculate(r));
+                Figure c = new Circle(5); // Переменная базового типа ссылается на объект потомка
+                Figure r = new Rectangle(4, 6); // Переменная базового типа ссылается на объект потомка
+                Console.WriteLine("Circle area: " + c.GetArea());
+                Console.WriteLine("Rectangle area: " + r.GetArea());
             }
         }
-
-
-        //class Figure
-        //{
-        //    public virtual double GetArea()
-        //    {
-        //        return 0;
-        //    }
-        //}
-
-        //class Circle : Figure
-        //{
-        //    public double Radius { get; set; }
-        //    public Circle(double radius)
-        //    {
-        //        Radius = radius;
-        //    }
-        //    public override double GetArea()
-        //    {
-        //        return Math.PI * Radius * Radius;
-        //    }
-        //}
-        //class Rectangle : Figure
-        //{
-        //    public double Width { get; set; }
-        //    public double Height { get; set; }
-        //    public Rectangle(double width, double height)
-        //    {
-        //        Width = width;
-        //        Height = height;
-        //    }
-        //    public override double GetArea()
-        //    {
-        //        return Width * Height;
-        //    }
-        //}
-        //class Application
-        //{
-        //    static void Main()
-        //    {
-        //        var c = new Circle(5);
-        //        var r = new Rectangle(4, 6);
-        //        Console.WriteLine("Circle area: " + c.GetArea());
-        //        Console.WriteLine("Rectangle area: " + r.GetArea());
-        //    }
-        //}
     }
 }
