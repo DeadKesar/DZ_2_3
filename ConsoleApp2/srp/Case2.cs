@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System; // удаление всего лишнего
 
 namespace ConsoleApp2.srp
 {
     class Case2
     {
         class User // класс только для сущности пользователя
-        {
-            public string Name;
-            public string Email;
-            public string Password;
+        { // гарантируем что строки не null 
+            public string Name = string.Empty;
+            public string Email = string.Empty;
+            public string Password = string.Empty;
         }
 
         class UserManager // отдельный класс для управлением пользователем
