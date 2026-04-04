@@ -6,74 +6,97 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp2.dip
 {
-    internal class Case1
+    // Интерфейсы для абстракций
+    public interface IMessageSender
     {
-        public class EmailSender
+        void SendMessage(string recipient, string subject, string message);
+    }
+
+    public interface ILogger
+    {
+        void Log(string message);
+    }
+
+    // Реализация email отправки
+    public class EmailSender : IMessageSender
+    {
+        private readonly ILogger _logger;
+        private readonly SmtpConfig _config;
+
+        public EmailSender(SmtpConfig config, ILogger logger)
         {
-            public string SmtpServer { get; set; } 
-            public int Port { get; set; }
-
-            public EmailSender(string smtpServer, int port)
-            {
-                SmtpServer = smtpServer;
-                Port = port;
-            }
-
-            public void Connect() 
-            {
-                Console.WriteLine("Connecting to SMTP server " + SmtpServer + ":" + Port);
-            }
-
-            public void SendEmail(string recipient, string subject, string message)
-            {
-                Console.WriteLine("Sending email to " + recipient + " with subject " + subject);
-            }
-
-            public void Disconnect()
-            {
-                Console.WriteLine("Disconnecting from SMTP server " + SmtpServer);
-            }
-
-            public void LogEmail(string log)
-            {
-                Console.WriteLine("Logging email: " + log);
-            }
+            _config = config;
+            _logger = logger;
+            Connect();
         }
 
-        public class Notifier
+        private void Connect()
         {
-            private EmailSender _emailSender;
-            public string NotifierName { get; set; }
-
-            public Notifier(string name)
-            {
-                NotifierName = name;
-                _emailSender = new EmailSender("smtp.example.com", 25);
-            }
-
-            public void NotifyByEmail(string recipient, string subject, string message)
-            {
-                _emailSender.Connect();
-                _emailSender.SendEmail(recipient, subject, message);
-                _emailSender.Disconnect();
-            }
-
-            public void LogNotification(string log)
-            {
-                _emailSender.LogEmail(log);
-            }
-
-            public void UpdateNotifierName(string newName)
-            {
-                NotifierName = newName;
-                Console.WriteLine("Notifier name updated to " + NotifierName);
-            }
-
-            public void ShowNotifierInfo()
-            {
-                Console.WriteLine("Notifier: " + NotifierName);
-            }
+            _logger.Log($"Connecting to SMTP server {_config.SmtpServer}:{_config.Port}");
         }
 
+        public void SendMessage(string recipient, string subject, string message)
+        {
+            _logger.Log($"Sending email to {recipient} with subject {subject}");
+            // Реальная отправка
+        }
+
+        private void Disconnect()
+        {
+            _logger.Log($"Disconnecting from SMTP server {_config.SmtpServer}");
+        }
+
+        public void Dispose()
+        {
+            Disconnect();
+        }
+    }
+
+    // Отдельный логгер
+    public class ConsoleLogger : ILogger
+    {
+        public void Log(string message)
+        {
+            Console.WriteLine($"Log: {message}");
+        }
+    }
+
+    // Конфигурация SMTP
+    public class SmtpConfig
+    {
+        public string SmtpServer { get; set; }
+        public int Port { get; set; }
+    }
+
+    // Notifier зависит от абстракций, а не от конкретных классов
+    public class Notifier
+    {
+        private readonly IMessageSender _messageSender;
+        private readonly ILogger _logger;
+        public string NotifierName { get; set; }
+
+        public Notifier(string name, IMessageSender messageSender, ILogger logger)
+        {
+            NotifierName = name;
+            _messageSender = messageSender;
+            _logger = logger;
+        }
+
+        public void Notify(string recipient, string subject, string message)
+        {
+            _messageSender.SendMessage(recipient, subject, message);
+            _logger.Log($"Notification sent by {NotifierName}");
+        }
+
+        public void UpdateNotifierName(string newName)
+        {
+            NotifierName = newName;
+            Console.WriteLine($"Notifier name updated to {NotifierName}");
+        }
+
+        public void ShowNotifierInfo()
+        {
+            Console.WriteLine($"Notifier: {NotifierName}");
+        }
     }
 }
