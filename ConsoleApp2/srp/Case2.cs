@@ -1,41 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.srp
 {
     class Case2
     {
-        class User
+        public class User
         {
-            public string Name;
-            public string Email;
-            public string Password;
+            public string Name { get; }
+            public string Email { get; }
+            public string Password { get; private set; }
 
-            public void Register(string name, string email, string password)
+            public User(string name, string email, string password)
             {
                 Name = name;
                 Email = email;
                 Password = password;
-                Console.WriteLine("User registered!");
-            }
-
-            public void PrintUserInfo()
-            {
-                Console.WriteLine("User: " + Name + " Email: " + Email);
             }
 
             public void ChangePassword(string newPassword)
             {
                 Password = newPassword;
-                Console.WriteLine("Password changed!");
             }
+        }
 
-            public void SendEmail(string message)
+        public class UserRegistrationService
+        {
+            public User Register(string name, string email, string password)
             {
-                Console.WriteLine("Email sent to " + Email + ": " + message);
+                var user = new User(name, email, password);
+                Console.WriteLine("User registered!");
+                return user;
+            }
+        }
+
+        public class UserPrinter
+        {
+            public void PrintUserInfo(User user)
+            {
+                Console.WriteLine($"User: {user.Name} Email: {user.Email}");
+            }
+        }
+
+        public class EmailService
+        {
+            public void SendEmail(string email, string message)
+            {
+                Console.WriteLine($"Email sent to {email}: {message}");
             }
         }
 
@@ -43,10 +53,16 @@ namespace ConsoleApp2.srp
         {
             public void Execute()
             {
-                User user = new User();
-                user.Register("Tim", "tim@example.com", "123456");
-                user.PrintUserInfo();
-                user.SendEmail("Hello!");
+                var registrationService = new UserRegistrationService();
+                var printer = new UserPrinter();
+                var emailService = new EmailService();
+
+                User user = registrationService.Register("Tim", "tim@example.com", "123456");
+                printer.PrintUserInfo(user);
+                emailService.SendEmail(user.Email, "Hello!");
+
+                user.ChangePassword("newStrongPassword");
+                Console.WriteLine("Password changed!");
             }
         }
     }
