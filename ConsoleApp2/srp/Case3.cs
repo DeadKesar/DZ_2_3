@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,43 +11,59 @@ namespace ConsoleApp2.srp
     {
         class Order
         {
-            public int OrderId;
-            public List<string> Items = new List<string>();
+            public int orderId { get; set;  }
+            public List<string> items { get; } = new List<string>();
 
-            public void AddItem(string item)
+            public Order(string item)
             {
-                Items.Add(item);
-            }
+                items.Add(item);
+            } 
 
-            public void SaveToDatabase()
-            {
-                Console.WriteLine("Order saved to database!");
-            }
-
-            public void PrintOrder()
-            {
-                Console.WriteLine("Order #" + OrderId);
-                foreach (var item in Items)
-                {
-                    Console.WriteLine(" - " + item);
-                }
-            }
-
-            public void SendOrderConfirmation()
+        }
+        public class SendOrderService
+        {
+            public void SendOrder()
             {
                 Console.WriteLine("Order confirmation email sent!");
             }
         }
 
+        public class PrinterOrderService
+        {
+            public void PrintOrder(List<string> items, int orderId)
+            {
+                Console.WriteLine("Order #" + orderId);
+                foreach (var item in items)
+                {
+                    Console.WriteLine(" - " + item);
+                }
+            }
+        }
+
+        public class SaveToDatabaseService
+        {
+            public void SaveToDatabase()
+            {
+                Console.WriteLine("Order saved to Database!");
+            }
+        }
+
+
+
         public class App
         {
             static void Main()
             {
-                Order order = new Order();
-                order.AddItem("Laptop");
-                order.PrintOrder();
-                order.SaveToDatabase();
-                order.SendOrderConfirmation();
+                Order order = new Order("Laptop");
+
+
+                PrinterOrderService printer = new PrinterOrderService(); 
+                SaveToDatabaseService saver = new SaveToDatabaseService();
+                SendOrderService sender = new SendOrderService(); 
+
+                printer.PrintOrder(order.items, order.orderId);
+                saver.SaveToDatabase();
+                sender.SendOrder(); 
             }
         }
     }
