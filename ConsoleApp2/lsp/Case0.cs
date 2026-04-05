@@ -1,60 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.lsp
 {
     internal class Case0
     {
-        public class Shape
+        public abstract class Shape
+        {
+            public abstract int CalculateArea();
+            public abstract void Draw();
+        }
+
+        public class Rectangle : Shape
         {
             protected int Width { get; set; }
             protected int Height { get; set; }
 
-            public virtual void SetWidth(int width)
+            public void SetWidth(int width)
             {
                 Width = width;
                 Console.WriteLine($"Width set to {width}.");
             }
 
-            public virtual void SetHeight(int height)
+            public void SetHeight(int height)
             {
                 Height = height;
                 Console.WriteLine($"Height set to {height}.");
             }
 
-            public virtual int CalculateArea()
+            public override int CalculateArea()
             {
                 return Width * Height;
             }
 
-            public virtual void Draw()
+            public override void Draw()
             {
-                Console.WriteLine("Drawing shape.");
+                Console.WriteLine("Drawing rectangle.");
             }
         }
 
         public class Circle : Shape
         {
-            public override void SetWidth(int width)
+            public int Radius { get; set; }
+
+            public Circle(int radius)
             {
-                Width = width;
-                Height = width;
-                Console.WriteLine($"Circle diameter set to {width}.");
+                Radius = radius;
             }
 
-            public override void SetHeight(int height)
+            public void SetRadius(int radius)
             {
-                Width = height;
-                Height = height;
-                Console.WriteLine($"Circle diameter set to {height}.");
+                Radius = radius;
+                Console.WriteLine($"Circle radius set to {radius}.");
             }
 
             public override int CalculateArea()
             {
-                return (int)(Math.PI * (Width / 2) * (Width / 2));
+                return (int)(Math.PI * Radius * Radius);
             }
 
             public override void Draw()
@@ -62,6 +63,5 @@ namespace ConsoleApp2.lsp
                 Console.WriteLine("Drawing circle.");
             }
         }
-
     }
 }
