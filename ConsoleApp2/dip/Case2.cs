@@ -4,51 +4,57 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ConsoleApp2.dip
 {
+    
+    public interface ILogger {
+        void WriteLog(string log);
+        void ClearLog();
+        void ArchiveLog();
+        void GetLogStatus();
+    }  
+
     internal class Case2
-    {
-        public class Logger
+    { 
+        public class FileLogger : ILogger
         {
             public string FilePath { get; set; }
 
-            public Logger(string filePath)
-            {
+            public FileLogger(string filePath) {
                 FilePath = filePath;
             }
 
-            public void WriteLog(string log)
-            {
+            public void WriteLog(string log) {
                 Console.WriteLine("Writing log to file " + FilePath + ": " + log);
             }
 
-            public void ClearLog()
-            {
+            public void ClearLog() {
                 Console.WriteLine("Clearing log file " + FilePath);
             }
 
-            public void ArchiveLog()
-            {
+            public void ArchiveLog() {
                 Console.WriteLine("Archiving log file " + FilePath);
             }
 
-            public void GetLogStatus()
-            {
+            public void GetLogStatus() {
                 Console.WriteLine("Checking log status for file " + FilePath);
             }
         }
 
+        // Теперь этот класс зависит от абстракции ILogger 
         public class UserActivity
         {
-            private Logger _logger;
+            private readonly ILogger _logger;
+
             public string UserName { get; set; }
             public int ActivityCount { get; set; }
 
-            public UserActivity(string userName)
+            public UserActivity(string userName, ILogger logger)
             {
                 UserName = userName;
                 ActivityCount = 0;
-                _logger = new Logger("user_activity.log");
+                _logger = logger;
             }
 
             public void RecordActivity(string activity)
@@ -73,6 +79,5 @@ namespace ConsoleApp2.dip
                 Console.WriteLine("User " + UserName + " has " + ActivityCount + " activities recorded.");
             }
         }
-
     }
 }
