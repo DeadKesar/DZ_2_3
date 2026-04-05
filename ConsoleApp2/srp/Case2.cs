@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.srp
 {
@@ -10,21 +6,15 @@ namespace ConsoleApp2.srp
     {
         class User
         {
-            public string Name;
-            public string Email;
-            public string Password;
+            public string Name { get; private set; }
+            public string Email { get; private set; }
+            public string Password { get; private set; }
 
-            public void Register(string name, string email, string password)
+            public User(string name, string email, string password)
             {
                 Name = name;
                 Email = email;
                 Password = password;
-                Console.WriteLine("User registered!");
-            }
-
-            public void PrintUserInfo()
-            {
-                Console.WriteLine("User: " + Name + " Email: " + Email);
             }
 
             public void ChangePassword(string newPassword)
@@ -32,10 +22,30 @@ namespace ConsoleApp2.srp
                 Password = newPassword;
                 Console.WriteLine("Password changed!");
             }
+        }
 
-            public void SendEmail(string message)
+        class UserService
+        {
+            public User Register(string name, string email, string password)
             {
-                Console.WriteLine("Email sent to " + Email + ": " + message);
+                Console.WriteLine("User registered!");
+                return new User(name, email, password);
+            }
+        }
+
+        class UserPrinter
+        {
+            public void PrintUserInfo(User user)
+            {
+                Console.WriteLine("User: " + user.Name + " Email: " + user.Email);
+            }
+        }
+
+        class EmailService
+        {
+            public void SendEmail(User user, string message)
+            {
+                Console.WriteLine("Email sent to " + user.Email + ": " + message);
             }
         }
 
@@ -43,10 +53,13 @@ namespace ConsoleApp2.srp
         {
             public void Execute()
             {
-                User user = new User();
-                user.Register("Tim", "tim@example.com", "123456");
-                user.PrintUserInfo();
-                user.SendEmail("Hello!");
+                UserService userService = new UserService();
+                UserPrinter userPrinter = new UserPrinter();
+                EmailService emailService = new EmailService();
+
+                User user = userService.Register("Tim", "tim@example.com", "123456");
+                userPrinter.PrintUserInfo(user);
+                emailService.SendEmail(user, "Hello!");
             }
         }
     }
