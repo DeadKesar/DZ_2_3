@@ -1,40 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.ocp
 {
     class Case1
     {
+        interface IUserDrawer
+        {
+            void Draw(User user);
+        }
+
         interface ICoolGuy
         {
-            void CallCoolGuy();
         }
+
         class User
         {
-            private bool _isSelected;
-            private string _image;
+            public bool IsSelected { get; }
+            public string Image { get; }
 
             public User(bool isSelected, string image)
             {
-                _isSelected = isSelected;
-                _image = image;
+                IsSelected = isSelected;
+                Image = image;
             }
-            public void DrawUser()
+        }
+
+        class DefaultUserDrawer : IUserDrawer
+        {
+            public virtual void Draw(User user)
             {
-                if (_isSelected)
+                if (user.IsSelected)
                     DrawEllipseAroundUser();
-                if (_image != null)
+
+                if (user.Image != null)
                     DrawImageOfUser();
-                if (this is ICoolGuy) // редкий случай
-                    DrawCoolGuyGlasses();
-                // И т. д.
             }
-            void DrawEllipseAroundUser() { }
-            void DrawImageOfUser() { }
-            void DrawCoolGuyGlasses() { }
+
+            protected void DrawEllipseAroundUser()
+            {
+                Console.WriteLine("Drawing ellipse around user.");
+            }
+
+            protected void DrawImageOfUser()
+            {
+                Console.WriteLine("Drawing user image.");
+            }
+        }
+
+        class CoolGuyUserDrawer : DefaultUserDrawer
+        {
+            public override void Draw(User user)
+            {
+                base.Draw(user);
+
+                if (user is ICoolGuy)
+                    DrawCoolGuyGlasses();
+            }
+
+            private void DrawCoolGuyGlasses()
+            {
+                Console.WriteLine("Drawing cool guy glasses.");
+            }
+        }
+
+        class CoolUser : User, ICoolGuy
+        {
+            public CoolUser(bool isSelected, string image)
+                : base(isSelected, image)
+            {
+            }
         }
     }
 }
