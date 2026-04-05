@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +8,6 @@ namespace ConsoleApp2.ocp
 {
     class Case1
     {
-        interface ICoolGuy
-        {
-            void CallCoolGuy();
-        }
         class User
         {
             private bool _isSelected;
@@ -22,19 +18,35 @@ namespace ConsoleApp2.ocp
                 _isSelected = isSelected;
                 _image = image;
             }
-            public void DrawUser()
+
+            public virtual void DrawUser()
             {
                 if (_isSelected)
                     DrawEllipseAroundUser();
+
                 if (_image != null)
                     DrawImageOfUser();
-                if (this is ICoolGuy) // редкий случай
-                    DrawCoolGuyGlasses();
-                // И т. д.
             }
-            void DrawEllipseAroundUser() { }
-            void DrawImageOfUser() { }
-            void DrawCoolGuyGlasses() { }
+
+            protected void DrawEllipseAroundUser() { }
+
+            protected void DrawImageOfUser() { }
+        }
+
+        class CoolUser : User
+        {
+            public CoolUser(bool isSelected, string image)
+                : base(isSelected, image)
+            {
+            }
+
+            public override void DrawUser()
+            {
+                base.DrawUser();
+                DrawCoolGuyGlasses();
+            }
+
+            private void DrawCoolGuyGlasses() { }
         }
     }
 }
