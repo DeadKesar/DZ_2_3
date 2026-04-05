@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.dip
 {
     internal class Case1
     {
-        public class EmailSender
+        public interface IMessageSender
         {
-            public string SmtpServer { get; set; } 
+            void Connect();
+            void Send(string recipient, string subject, string message);
+            void Disconnect();
+            void Log(string log);
+        }
+
+        public class EmailSender : IMessageSender
+        {
+            public string SmtpServer { get; set; }
             public int Port { get; set; }
 
             public EmailSender(string smtpServer, int port)
@@ -19,61 +23,61 @@ namespace ConsoleApp2.dip
                 Port = port;
             }
 
-            public void Connect() 
+            public void Connect()
             {
-                Console.WriteLine("Connecting to SMTP server " + SmtpServer + ":" + Port);
+                Console.WriteLine($"Connecting to SMTP server {SmtpServer}:{Port}");
             }
 
-            public void SendEmail(string recipient, string subject, string message)
+            public void Send(string recipient, string subject, string message)
             {
-                Console.WriteLine("Sending email to " + recipient + " with subject " + subject);
+                Console.WriteLine($"Sending email to {recipient} with subject \"{subject}\"");
+                Console.WriteLine($"Message: {message}");
             }
 
             public void Disconnect()
             {
-                Console.WriteLine("Disconnecting from SMTP server " + SmtpServer);
+                Console.WriteLine($"Disconnecting from SMTP server {SmtpServer}");
             }
 
-            public void LogEmail(string log)
+            public void Log(string log)
             {
-                Console.WriteLine("Logging email: " + log);
+                Console.WriteLine($"Logging email: {log}");
             }
         }
 
         public class Notifier
         {
-            private EmailSender _emailSender;
-            public string NotifierName { get; set; }
+            private readonly IMessageSender _messageSender;
+            public string NotifierName { get; private set; }
 
-            public Notifier(string name)
+            public Notifier(string name, IMessageSender messageSender)
             {
                 NotifierName = name;
-                _emailSender = new EmailSender("smtp.example.com", 25);
+                _messageSender = messageSender;
             }
 
             public void NotifyByEmail(string recipient, string subject, string message)
             {
-                _emailSender.Connect();
-                _emailSender.SendEmail(recipient, subject, message);
-                _emailSender.Disconnect();
+                _messageSender.Connect();
+                _messageSender.Send(recipient, subject, message);
+                _messageSender.Disconnect();
             }
 
             public void LogNotification(string log)
             {
-                _emailSender.LogEmail(log);
+                _messageSender.Log(log);
             }
 
             public void UpdateNotifierName(string newName)
             {
                 NotifierName = newName;
-                Console.WriteLine("Notifier name updated to " + NotifierName);
+                Console.WriteLine($"Notifier name updated to {NotifierName}");
             }
 
             public void ShowNotifierInfo()
             {
-                Console.WriteLine("Notifier: " + NotifierName);
+                Console.WriteLine($"Notifier: {NotifierName}");
             }
         }
-
     }
 }

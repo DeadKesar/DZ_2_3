@@ -1,22 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.isp
 {
     internal class Case1
     {
-        public interface IOfficeDevice
+        public interface IPrinter
         {
             void Print(string document);
+        }
+
+        public interface IScanner
+        {
             void Scan(string document);
+        }
+
+        public interface IFax
+        {
             void Fax(string document);
+        }
+
+        public interface ICopier
+        {
             void Copy(string document);
         }
 
-        public class BasicPrinter : IOfficeDevice
+        public class BasicPrinter : IPrinter
         {
             public string Model { get; set; }
 
@@ -30,28 +38,13 @@ namespace ConsoleApp2.isp
                 Console.WriteLine("BasicPrinter printing: " + document);
             }
 
-            public void Scan(string document)
-            {
-                throw new NotImplementedException("BasicPrinter cannot scan documents");
-            }
-
-            public void Fax(string document)
-            {
-                throw new NotImplementedException("BasicPrinter cannot fax documents");
-            }
-
-            public void Copy(string document)
-            {
-                throw new NotImplementedException("BasicPrinter cannot copy documents");
-            }
-
             public void Maintenance()
             {
                 Console.WriteLine("Performing maintenance on BasicPrinter " + Model);
             }
         }
 
-        public class AllInOnePrinter : IOfficeDevice
+        public class AllInOnePrinter : IPrinter, IScanner, IFax, ICopier
         {
             public string Model { get; set; }
 
@@ -82,9 +75,8 @@ namespace ConsoleApp2.isp
 
             public void Calibrate()
             {
-                Console.WriteLine("Calibrating printer " + Model); 
+                Console.WriteLine("Calibrating printer " + Model);
             }
         }
-
     }
 }
