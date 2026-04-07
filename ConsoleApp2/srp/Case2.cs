@@ -1,53 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace ConsoleApp2.srp
 {
-    class Case2
+    class User
     {
-        class User
+        public string Name;
+        public string Email;
+        public string Password;
+    }
+    class UserService
+    {
+        public void Register(User user, string name, string email, string password)
         {
-            public string Name;
-            public string Email;
-            public string Password;
+            user.Name = name;
+            user.Email = email;
+            user.Password = password;
 
-            public void Register(string name, string email, string password)
-            {
-                Name = name;
-                Email = email;
-                Password = password;
-                Console.WriteLine("User registered!");
-            }
-
-            public void PrintUserInfo()
-            {
-                Console.WriteLine("User: " + Name + " Email: " + Email);
-            }
-
-            public void ChangePassword(string newPassword)
-            {
-                Password = newPassword;
-                Console.WriteLine("Password changed!");
-            }
-
-            public void SendEmail(string message)
-            {
-                Console.WriteLine("Email sent to " + Email + ": " + message);
-            }
+            Console.WriteLine("User registered!");
         }
 
-        public class App
+        public void ChangePassword(User user, string newPassword)
         {
-            public void Execute()
-            {
-                User user = new User();
-                user.Register("Tim", "tim@example.com", "123456");
-                user.PrintUserInfo();
-                user.SendEmail("Hello!");
-            }
+            user.Password = newPassword;
+            Console.WriteLine("Password changed!");
+        }
+    }
+    class EmailService
+    {
+        public void SendEmail(string email, string message)
+        {
+            Console.WriteLine("Email sent to " + email + ": " + message);
+        }
+    }
+    class UserPrinter
+    {
+        public void Print(User user)
+        {
+            Console.WriteLine("User: " + user.Name + " Email: " + user.Email);
+        }
+    }
+
+    public class App
+    {
+        public void Execute()
+        {
+            User user = new User();
+
+            UserService userService = new UserService();
+            EmailService emailService = new EmailService();
+            UserPrinter printer = new UserPrinter();
+
+            userService.Register(user, "Tim", "tim@example.com", "123456");
+            printer.Print(user);
+            emailService.SendEmail(user.Email, "Hello!");
         }
     }
 }
