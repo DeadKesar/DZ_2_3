@@ -4,49 +4,82 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp2.srp
+namespace ConsoleApp2.dip
 {
-    class Case2
+    internal class Case1
     {
-        class User
+        public interface IEmailSender
         {
-            public string Name;
-            public string Email;
-            public string Password;
+            void Connect();
+            void SendEmail(string recipient, string subject, string message);
+            void Disconnect();
+            void LogEmail(string log);
+        }
 
-            public void Register(string name, string email, string password)
+        public class EmailSender : IEmailSender
+        {
+            public string SmtpServer { get; set; }
+            public int Port { get; set; }
+
+            public EmailSender(string smtpServer, int port)
             {
-                Name = name;
-                Email = email;
-                Password = password;
-                Console.WriteLine("User registered!");
+                SmtpServer = smtpServer;
+                Port = port;
             }
 
-            public void PrintUserInfo()
+            public void Connect()
             {
-                Console.WriteLine("User: " + Name + " Email: " + Email);
+                Console.WriteLine("Connecting to SMTP server " + SmtpServer + ":" + Port);
             }
 
-            public void ChangePassword(string newPassword)
+            public void SendEmail(string recipient, string subject, string message)
             {
-                Password = newPassword;
-                Console.WriteLine("Password changed!");
+                Console.WriteLine("Sending email to " + recipient + " with subject " + subject);
             }
 
-            public void SendEmail(string message)
+            public void Disconnect()
             {
-                Console.WriteLine("Email sent to " + Email + ": " + message);
+                Console.WriteLine("Disconnecting from SMTP server " + SmtpServer);
+            }
+
+            public void LogEmail(string log)
+            {
+                Console.WriteLine("Logging email: " + log);
             }
         }
 
-        public class App
+        public class Notifier
         {
-            public void Execute()
+            private IEmailSender _emailSender;
+            public string NotifierName { get; set; }
+
+            public Notifier(string name, IEmailSender emailSender)
             {
-                User user = new User();
-                user.Register("Tim", "tim@example.com", "123456");
-                user.PrintUserInfo();
-                user.SendEmail("Hello!");
+                NotifierName = name;
+                _emailSender = emailSender;
+            }
+
+            public void NotifyByEmail(string recipient, string subject, string message)
+            {
+                _emailSender.Connect();
+                _emailSender.SendEmail(recipient, subject, message);
+                _emailSender.Disconnect();
+            }
+
+            public void LogNotification(string log)
+            {
+                _emailSender.LogEmail(log);
+            }
+
+            public void UpdateNotifierName(string newName)
+            {
+                NotifierName = newName;
+                Console.WriteLine("Notifier name updated to " + NotifierName);
+            }
+
+            public void ShowNotifierInfo()
+            {
+                Console.WriteLine("Notifier: " + NotifierName);
             }
         }
     }
