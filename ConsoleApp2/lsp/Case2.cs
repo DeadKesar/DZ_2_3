@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp2.lsp
 {
+    // выполнить в папке LSP номер 3, а их там 0,1,2 так что я решил просто сделать 3 по счету
+
     internal class Case2
     {
         public class BankAccount
@@ -67,6 +69,5 @@ namespace ConsoleApp2.lsp
                 Console.WriteLine("Account " + AccountNumber + " is frozen again");
             }
         }
-
     }
 }
