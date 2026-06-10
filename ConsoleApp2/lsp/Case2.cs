@@ -10,25 +10,46 @@ namespace ConsoleApp2.lsp
 
     internal class Case2
     {
-        public class BankAccount
+        public abstract class BankAccount
         {
             public string AccountNumber { get; set; } = Guid.NewGuid().ToString();
-            public double Balance { get; set; }
+            public double Balance { get; protected set; }
+            public bool IsFrozen { get; protected set; }
 
             public virtual void Deposit(double amount)
             {
+                if (IsFrozen)
+                {
+                    Console.WriteLine("Cannot deposit to frozen account " + AccountNumber);
+                    return;
+                }
                 Balance += amount;
                 Console.WriteLine("Deposited " + amount + " into account " + AccountNumber);
             }
 
             public virtual void Withdraw(double amount)
             {
+                if (IsFrozen)
+                {
+                    Console.WriteLine("Cannot withdraw from frozen account " + AccountNumber);
+                    return;
+                }
+                if (amount > Balance)
+                {
+                    Console.WriteLine("Insufficient funds");
+                    return;
+                }
                 Balance -= amount;
                 Console.WriteLine("Withdrew " + amount + " from account " + AccountNumber);
             }
 
             public virtual void Transfer(BankAccount targetAccount, double amount)
             {
+                if (IsFrozen || targetAccount.IsFrozen)
+                {
+                    Console.WriteLine("Cannot transfer - one of accounts is frozen");
+                    return;
+                }
                 Withdraw(amount);
                 targetAccount.Deposit(amount);
                 Console.WriteLine("Transferred " + amount + " from account " + AccountNumber + " to " + targetAccount.AccountNumber);
@@ -36,25 +57,13 @@ namespace ConsoleApp2.lsp
 
             public virtual string GetAccountInfo()
             {
-                return "Account: " + AccountNumber + " with balance: " + Balance;
+                string status = IsFrozen ? " (FROZEN)" : "";
+                return "Account: " + AccountNumber + " with balance: " + Balance + status;
             }
 
             public virtual void UpdateAccountDetails()
             {
                 Console.WriteLine("Updating account details for " + AccountNumber);
-            }
-        }
-
-        public class FrozenAccount : BankAccount
-        {
-            public bool IsFrozen { get; set; } = true;
-
-            public override void Withdraw(double amount)
-            { }
-
-            public override void Deposit(double amount)
-            {
-                Console.WriteLine("Cannot deposit to a frozen account " + AccountNumber);
             }
 
             public void Unfreeze()
@@ -66,7 +75,23 @@ namespace ConsoleApp2.lsp
             public void Freeze()
             {
                 IsFrozen = true;
-                Console.WriteLine("Account " + AccountNumber + " is frozen again");
+                Console.WriteLine("Account " + AccountNumber + " is frozen");
+            }
+        }
+
+        public class NormalAccount : BankAccount
+        {
+            public NormalAccount()
+            {
+                IsFrozen = false;
+            }
+        }
+
+        public class FrozenAccount : BankAccount
+        {
+            public FrozenAccount()
+            {
+                IsFrozen = true;
             }
         }
     }
