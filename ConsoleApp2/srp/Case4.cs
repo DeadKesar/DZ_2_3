@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ConsoleApp2.srp
 {
@@ -22,10 +23,13 @@ namespace ConsoleApp2.srp
             {
                 Console.WriteLine("Employee: " + Name + " Salary: $" + Salary);
             }
+        }
 
-            public void SaveToFile()
+        class EmployeeFileRepository
+        {
+            public void SaveToFile(Employee emp)
             {
-                File.WriteAllText("employee.txt", Name + " - " + Salary);
+                File.WriteAllText("employee.txt", emp.Name + " - " + emp.Salary);
                 Console.WriteLine("Employee saved to file!");
             }
 
@@ -44,7 +48,9 @@ namespace ConsoleApp2.srp
                 emp.Name = "John";
                 emp.SetSalary(5000);
                 emp.PrintInfo();
-                emp.SaveToFile();
+
+                EmployeeFileRepository repo = new EmployeeFileRepository();
+                repo.SaveToFile(emp);
             }
         }
     }
