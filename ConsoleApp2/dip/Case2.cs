@@ -50,7 +50,7 @@ namespace ConsoleApp2.dip
         {
             private readonly ILogger _logger; 
             public string UserName { get; set; }
-            public int ActivityCount { get;}
+            public int ActivityCount { get; set; }
 
             public UserActivity(string userName, ILogger logger)
             {
